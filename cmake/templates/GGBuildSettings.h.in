@@ -1,0 +1,10 @@
+#ifndef GG_BUILD_SETTINGS_H_
+#define GG_BUILD_SETTINGS_H_
+
+#define GG_ASSERT_MODE 0
+
+#define GG_MEMORY_TRACKER 0
+
+#define GG_DOUBLE_PRECISION 0
+
+#endif
