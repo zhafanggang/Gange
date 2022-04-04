@@ -2,6 +2,8 @@
 
 #include <vector>
 #include "vulkan/vulkan.h"
+#include <iostream>
+#include "GGBuildSettings.h"
 
 namespace Gange {
 namespace initializers {

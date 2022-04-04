@@ -3,7 +3,7 @@
 #include <assert.h>
 namespace Gange {
 
-template <typename T> class GGFastArray {
+template <typename T> class FastArray {
     T *mData;
     size_t mSize;
     size_t mCapacity;
@@ -26,18 +26,18 @@ public:
     typedef T *iterator;
     typedef const T *const_iterator;
 
-    GGFastArray()
+    FastArray()
         : mData(0)
         , mSize(0)
         , mCapacity(0) {}
 
-    void swap(GGFastArray<T> &other) {
+    void swap(FastArray<T> &other) {
         std::swap(this->mData, other.mData);
         std::swap(this->mSize, other.mSize);
         std::swap(this->mCapacity, other.mCapacity);
     }
 
-    GGFastArray(const GGFastArray<T> &copy)
+    FastArray(const FastArray<T> &copy)
         : mSize(copy.mSize)
         , mCapacity(copy.mSize) {
         mData = (T *) ::operator new(mSize * sizeof(T));
@@ -46,7 +46,7 @@ public:
         }
     }
 
-    void operator=(const GGFastArray<T> &copy) {
+    void operator=(const FastArray<T> &copy) {
         if (&copy != this) {
             for (size_t i = 0; i < mSize; ++i)
                 mData[i].~T();
@@ -63,14 +63,14 @@ public:
     }
 
     /// Creates an array reserving the amount of elements (memory is not initialized)
-    GGFastArray(size_t reserveAmount)
+    FastArray(size_t reserveAmount)
         : mSize(0)
         , mCapacity(reserveAmount) {
         mData = (T *) ::operator new(reserveAmount * sizeof(T));
     }
 
     /// Creates an array pushing the value N times
-    GGFastArray(size_t count, const T &value)
+    FastArray(size_t count, const T &value)
         : mSize(count)
         , mCapacity(count) {
         mData = (T *) ::operator new(count * sizeof(T));
@@ -79,7 +79,7 @@ public:
         }
     }
 
-    ~GGFastArray() {
+    ~FastArray() {
         destroy();
     }
 

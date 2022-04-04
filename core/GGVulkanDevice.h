@@ -3,6 +3,7 @@
 
 #include <vulkan/vulkan.h>
 #include <vector>
+#include <string>
 #include "buffer/GGVulkanBuffer.h"
 
 namespace Gange {
@@ -47,9 +48,9 @@ struct GGVulkanDevice {
     VkResult createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures, std::vector<const char *> enabledExtensions,
                                  void *pNextChain, bool useSwapChain = true,
                                  VkQueueFlags requestedQueueTypes = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
-    VkResult createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
+    VkResult createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryPropertyFlags,
                           VkBuffer *buffer, VkDeviceMemory *bufferMemory, void *data = nullptr);
-    VkResult createBuffer(VkDeviceSize size, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags,
+    VkResult createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryPropertyFlags,
                           GGVulkanBuffer *buffer, void *data = nullptr);
 
     VkCommandPool

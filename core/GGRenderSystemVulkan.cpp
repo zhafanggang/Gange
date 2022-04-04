@@ -9,20 +9,13 @@
 
 namespace Gange {
 
-GGRenderSystemVulkan::GGRenderSystemVulkan() {
-    mRenderable = new Renderable();
-}
+GGRenderSystemVulkan::GGRenderSystemVulkan() {}
 
 void GGRenderSystemVulkan::destroyCommandBuffers() {
     vkFreeCommandBuffers(device, cmdPool, static_cast<uint32_t>(drawCmdBuffers.size()), drawCmdBuffers.data());
 }
 
 GGRenderSystemVulkan::~GGRenderSystemVulkan() {
-    delete mRenderable;
-    mRenderable = nullptr;
-
-    delete mPlane;
-    mPlane = nullptr;
 
     delete vulkanDevice;
 }
@@ -61,12 +54,7 @@ void GGRenderSystemVulkan::buildCommandBuffers() {
         vkCmdBeginRenderPass(drawCmdBuffers[i], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdSetViewport(drawCmdBuffers[i], 0, 1, &viewport);
         vkCmdSetScissor(drawCmdBuffers[i], 0, 1, &scissor);
-        // Bind scene matrices descriptor to set 0
-        vkCmdBindDescriptorSets(drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, mPlane->mPipelineLayout, 0, 1,
-                                &mPlane->mUniformbuffer->mDescriptorSet, 0, nullptr);
-        vkCmdBindPipeline(drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, mPipline->mPiplines[0]);
-        mPlane->draw(drawCmdBuffers[i]);
-
+        mPipline->buildCommandBuffers(drawCmdBuffers[i]);
         vkCmdEndRenderPass(drawCmdBuffers[i]);
         VK_CHECK_RESULT(vkEndCommandBuffer(drawCmdBuffers[i]));
     }
@@ -88,7 +76,7 @@ void GGRenderSystemVulkan::initialize() {
 
     vkGetDeviceQueue(device, vulkanDevice->queueFamilyIndices.graphics, 0, &queue);
 
-    GGVulkanSingleHandle::setVulkanDevice(vulkanDevice, queue);
+    VulkanSingleHandle::setVulkanDevice(vulkanDevice, queue);
 
     VkBool32 validDepthFormat = Vulkantools::getSupportedDepthFormat(physicalDevice, &depthFormat);
     assert(validDepthFormat);
@@ -124,10 +112,6 @@ void GGRenderSystemVulkan::prepare() {
     setupDepthStencil();
     setupRenderPass();
     setupFrameBuffer();
-
-    mPlane = new Plane();
-    mPlane->setCameraController(mCameraController);
-    mPlane->initialize();
 
     preparePipline();
 
@@ -409,7 +393,6 @@ void GGRenderSystemVulkan::pickPhysicalDevice() {
 }
 
 void GGRenderSystemVulkan::getEnabledFeatures() {
-    // Enable anisotropic filtering if supported
 #if (GG_ENABLE_SAMPLE_RATE_SHADING)
     if (deviceFeatures.sampleRateShading) {
         enabledFeatures.sampleRateShading = VK_TRUE;
@@ -456,7 +439,7 @@ void GGRenderSystemVulkan::createCommandPool() {
 }
 
 void GGRenderSystemVulkan::preparePipline() {
-    mPipline = new GGRenderPipline(mPlane, renderPass, mSampleCountFlagBits);
+    mPipline = new GGRenderPipline(renderPass, mSampleCountFlagBits);
     mPipline->initialize();
 }
 
@@ -471,8 +454,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL GGRenderSystemVulkan::debugCallback(
 void GGRenderSystemVulkan::render() {
 
     if (mCameraController->mViewUpdated) {
-        mCameraController->mViewUpdated = false;
-        mPlane->update();
+        mPipline->update();
     }
     draw();
 }
@@ -489,7 +471,6 @@ void GGRenderSystemVulkan::draw() {
 }
 
 void GGRenderSystemVulkan::prepareFrame() {
-
     VkResult result = swapChain.acquireNextImage(semaphores.presentComplete, &currentBuffer);
     if ((result == VK_ERROR_OUT_OF_DATE_KHR) || (result == VK_SUBOPTIMAL_KHR)) {
     } else {
@@ -541,8 +522,6 @@ void GGRenderSystemVulkan::windowResize() {
     if ((mWindowWidth > 0.0f) && (mWindowWidth > 0.0f)) {
         mCameraController->getCamera()->setWindowSize((Real) mWindowWidth, (Real) mWindowHeight);
     }
-
-    // mGirlModel->update();
 
     mPreparedFlag = true;
 }

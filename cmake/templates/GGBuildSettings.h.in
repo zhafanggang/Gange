@@ -7,4 +7,8 @@
 
 #define GG_DOUBLE_PRECISION 0
 
+#define GG_ENABLE_SAMPLE_RATE_SHADING 0
+
+#define GG_ENABLE_MULTI_SAMPLE 0
+
 #endif

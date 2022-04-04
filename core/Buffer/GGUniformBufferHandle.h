@@ -4,10 +4,15 @@
 #include "GGCameraController.h"
 
 namespace Gange {
+	enum UniformType
+	{
+		scene,
+		light
+	};
 
 class GGUniformBufferHandle : public GGBufferHandle {
 public:
-    GGUniformBufferHandle();
+    GGUniformBufferHandle(UniformType uniformType = UniformType::scene, bool protagonist = false);
 
     virtual ~GGUniformBufferHandle();
 
@@ -15,15 +20,27 @@ public:
 
     void updateUniformBuffers();
 
-    void setCameraController(GGCameraController *cameraController);
+    bool getIsSkyBoxFlag();
+
+    bool addPushConstant = false;
 
     struct {
         Matrix4 projection;
-        Matrix4 modelView;
-        // Vector4 lightPos = Vector4(5.0f, 5.0f, 5.0f, 1.0f);
-    } uboModel;
+        Matrix4 view;
+        Matrix4 model = Matrix4::IDENTITY;
+    } mUboModel;
+
+	struct {
+		Vector3 lightPos;
+		Vector3 viewPos;
+		bool blinn = true;
+	}mUboLight;
 
 private:
+	UniformType mUniformType = UniformType::scene;
+
+    bool mProtagonist = false;
+
     GGCameraController *mCameraController = nullptr;
 };
 

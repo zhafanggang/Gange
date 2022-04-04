@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "GGVulkanBuffer.h"
 #include "GGVulkanDevice.h"
-#include "GGFastArray.h"
+#include <vector>
 #include "GGLogger.h"
 #include "GGVulkanInitializers.h"
 

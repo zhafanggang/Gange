@@ -6,12 +6,11 @@
 namespace Gange {
 class Plane : public Renderable {
 public:
-    virtual void initialize();
-
-    void draw(VkCommandBuffer commandBuffer);
-
-protected:
-private:
+    Plane() {
+        initialize();
+    };
+    ~Plane(){};
+    void initialize() override;
 };
 }  // namespace Gange
 

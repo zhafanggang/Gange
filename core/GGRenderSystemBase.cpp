@@ -1,9 +1,11 @@
 #include "GGRenderSystemBase.h"
+#include "GGVulkanSingleHandle.h"
 
 namespace Gange {
 
 GGRenderSystemBase::GGRenderSystemBase() {
     mCameraController = new GGCameraController();
+	VulkanSingleHandle::setCameraController(mCameraController);
 }
 
 GGRenderSystemBase::~GGRenderSystemBase() {

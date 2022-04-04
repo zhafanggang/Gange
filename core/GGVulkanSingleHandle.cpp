@@ -1,25 +1,37 @@
 #include "GGVulkanSingleHandle.h"
 
 namespace Gange {
-GGVulkanDevice GGVulkanSingleHandle::getVulkanDevice() {
+GGVulkanDevice VulkanSingleHandle::getVulkanDevice() {
     return *mVulkanDevice;
 };
 
-GGVulkanDevice *GGVulkanSingleHandle::getVulkanDevicePtr() {
+GGVulkanDevice *VulkanSingleHandle::getVulkanDevicePtr() {
     return mVulkanDevice;
 };
 
-void GGVulkanSingleHandle::setVulkanDevice(GGVulkanDevice *vulkanDevice, VkQueue queue) {
+GGCameraController *VulkanSingleHandle::getCameraController()
+{
+	return mCameraController;
+}
+
+void VulkanSingleHandle::setCameraController(GGCameraController* cameraController)
+{
+	mCameraController = cameraController;
+}
+
+void VulkanSingleHandle::setVulkanDevice(GGVulkanDevice *vulkanDevice, VkQueue queue) {
     mVulkanDevice = vulkanDevice;
     mQueue = queue;
 };
 
-VkQueue GGVulkanSingleHandle::getVkQueue() {
+VkQueue VulkanSingleHandle::getVkQueue() {
     return mQueue;
 }
 
-VkQueue GGVulkanSingleHandle::mQueue = VK_NULL_HANDLE;
+VkQueue VulkanSingleHandle::mQueue = VK_NULL_HANDLE;
 
-GGVulkanDevice *GGVulkanSingleHandle::mVulkanDevice = nullptr;
+GGVulkanDevice *VulkanSingleHandle::mVulkanDevice = nullptr;
+
+GGCameraController *VulkanSingleHandle::mCameraController = nullptr;
 
 }  // namespace Gange

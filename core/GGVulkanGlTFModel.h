@@ -10,7 +10,7 @@
 #include "vulkan/vulkan.h"
 #include "GGVulkanDevice.h"
 
-#include "buffer/GGTextureImage.h"
+#include "Buffer/GGTextureImage.h"
 #define TINYGLTF_NO_INCLUDE_STB_IMAGE
 #define TINYGLTF_NO_STB_IMAGE_WRITE
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
@@ -29,71 +29,36 @@
 namespace Gange {
 class GGVulkanGlTFModel : public Renderable {
 public:
-    GGVulkanDevice *mVulkanDevice;
-    VkQueue mCopyQueue;
+    std::vector<int32_t> mTextureIndices;
+    std::vector<Material> mMaterials;
+    std::vector<Node*> mNodes;
+	std::vector<Node*> mLinearNodes;
 
-    struct Node;
+	std::vector<Skin>      mSkins;
+	std::vector<Animation> mAnimations;
 
-    struct Material {
-        Vector4 baseColorFactor = Vector4(1.0f);
-        uint32_t baseColorTextureIndex;
-    };
-
-    struct Texture {
-        int32_t imageIndex;
-    };
-
-    struct Primitive {
-        uint32_t firstIndex;
-        uint32_t indexCount;
-        int32_t materialIndex;
-    };
-
-    struct Mesh {
-        std::vector<Primitive> primitives;
-    };
-
-    struct Node {
-        Node *parent;
-        std::vector<Node> children;
-        Mesh mesh;
-        Matrix4 matrix;
-    };
-
-    struct Vertex {
-        Vector3 pos;
-        Vector3 normal;
-        Vector2 uv;
-        Vector3 color;
-    };
-
-    struct AnimationChannel {
-        std::string path;
-        Node *node;
-        uint32_t samplerIndex;
-    };
-
-    std::vector<GGTextureImage> images;
-    std::vector<Texture> textures;
-    std::vector<Material> materials;
-    std::vector<Node> nodes;
-
-    GGVulkanGlTFModel();
+    GGVulkanGlTFModel(bool protagonist = false);
 
     ~GGVulkanGlTFModel();
 
-    void initialize() override;
-
-    void setupDescriptorSet() override;
+    void initialize();
 
     void loadglTFFile(std::string filename);
     void loadImages(tinygltf::Model &input);
     void loadTextures(tinygltf::Model &input);
     void loadMaterials(tinygltf::Model &input);
-    void loadNode(const tinygltf::Node &inputNode, const tinygltf::Model &input, GGVulkanGlTFModel::Node *parent,
-                  std::vector<uint32_t> &indexBuffer, std::vector<GGVulkanGlTFModel::Vertex> &vertexBuffer);
-    void drawNode(VkCommandBuffer commandBuffer, GGVulkanGlTFModel::Node node);
-    void draw(VkCommandBuffer commandBuffer);
+
+	void loadSkins(tinygltf::Model &input);
+	void loadAnimations(tinygltf::Model &input);
+	void updateJoints(Node *node);
+	Node *findNode(Node *parent, uint32_t index);
+	Node *nodeFromIndex(uint32_t index);
+    void loadNode(const tinygltf::Node &inputNode, const tinygltf::Model &input, Node *parent,
+                  std::vector<uint32_t> &indexBuffer, std::vector<Vertex> &vertexBuffer);
+    void drawNode(VkCommandBuffer commandBuffer, Node *node);
+	Matrix4 getNodeMatrix(Node *node);
+
+    void buildCommandBuffers(VkCommandBuffer commandBuffer) override;
 };
 
 }  // namespace Gange

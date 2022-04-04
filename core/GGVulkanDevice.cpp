@@ -6,6 +6,8 @@
 
 namespace Gange {
 
+#define DEFAULT_FENCE_TIMEOUT 100000000000
+
 GGVulkanDevice::GGVulkanDevice(VkPhysicalDevice physicalDevice) {
     assert(physicalDevice);
     this->physicalDevice = physicalDevice;
@@ -266,14 +268,14 @@ VkResult GGVulkanDevice::createBuffer(VkDeviceSize size, VkBufferUsageFlags usag
     return VK_SUCCESS;
 }
 
-VkResult GGVulkanDevice::createBuffer(VkDeviceSize size, VkBufferUsageFlags usageFlags,
+VkResult GGVulkanDevice::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
                                       VkMemoryPropertyFlags memoryPropertyFlags, GGVulkanBuffer *buffer, void *data) {
     buffer->device = logicalDevice;
 
     // Create the buffer handle
     VkBufferCreateInfo bufCreateInfo{};
     bufCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    bufCreateInfo.usage = usageFlags;
+    bufCreateInfo.usage = usage;
     bufCreateInfo.size = size;
     VK_CHECK_RESULT(vkCreateBuffer(logicalDevice, &bufCreateInfo, nullptr, &buffer->buffer));
 
@@ -290,7 +292,7 @@ VkResult GGVulkanDevice::createBuffer(VkDeviceSize size, VkBufferUsageFlags usag
     // If the buffer has VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT set we also need to enable the appropriate flag
     // during allocation
     VkMemoryAllocateFlagsInfoKHR allocFlagsInfo{};
-    if (usageFlags & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) {
+    if (usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) {
         allocFlagsInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR;
         allocFlagsInfo.flags = VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT_KHR;
         memAllocInfo.pNext = &allocFlagsInfo;
@@ -299,7 +301,7 @@ VkResult GGVulkanDevice::createBuffer(VkDeviceSize size, VkBufferUsageFlags usag
 
     buffer->alignment = memReqs.alignment;
     buffer->size = size;
-    buffer->usageFlags = usageFlags;
+    buffer->usageFlags = usage;
     buffer->memoryPropertyFlags = memoryPropertyFlags;
 
     // If a pointer to the buffer data has been passed, map the buffer and copy over the data
@@ -360,7 +362,7 @@ void GGVulkanDevice::endOnceCommand(VkCommandBuffer commandBuffer, VkQueue queue
 
     VK_CHECK_RESULT(vkQueueSubmit(queue, 1, &submitInfo, fence));
     // Wait for the fence to signal that command buffer has finished executing
-    VK_CHECK_RESULT(vkWaitForFences(logicalDevice, 1, &fence, VK_TRUE, 10000000));
+    VK_CHECK_RESULT(vkWaitForFences(logicalDevice, 1, &fence, VK_TRUE, DEFAULT_FENCE_TIMEOUT));
     vkDestroyFence(logicalDevice, fence, nullptr);
     if (freeFlag) {
         vkFreeCommandBuffers(logicalDevice, cmdPool, 1, &commandBuffer);
@@ -372,6 +374,7 @@ void GGVulkanDevice::endOnceCommand(VkCommandBuffer commandBuffer, VkQueue queue
 }
 
 void GGVulkanDevice::endOnceCommand(VkCommandBuffer commandBuffer, bool freeFlag) {
+	mQueue = VulkanSingleHandle::getVkQueue();
     endOnceCommand(commandBuffer, mQueue, mCommandPool, freeFlag);
 }
 

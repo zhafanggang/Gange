@@ -2,17 +2,26 @@
 
 namespace Gange {
 void Plane::initialize() {
-    Renderable::initialize();
+    float gSizeX = 2000.0f;
+    float gSizeY = -5.0f;
+    float gSizeZ = 1000.0f;
+    float rept = 20;
+
+	Vector4 color(1.0f);
+
+    mVextices = {
+        {{-gSizeX, gSizeY, gSizeZ}, {0.0f, 1.0f, 0.0f}, color,{0.0f, rept}},
+		{{gSizeX, gSizeY, gSizeZ}, {0.0f, 1.0f, 0.0f}, color,{rept, rept}},
+		{{gSizeX, gSizeY, -gSizeZ}, {0.0f, 1.0f, 0.0f}, color,{rept, 0.0f}},
+        {{-gSizeX, gSizeY, -gSizeZ}, {0.0f, 1.0f, 0.0f}, color,{0.0f, 0.0f}},
+    };
+
+    mIndices = {0, 1, 2, 2, 3, 0};
+
+    loadVao(mVextices, mIndices);
+    char *imagePath = "../data/textures/model/floor.jpg";
+
+    loadTexture(imagePath);
 }
 
-void Plane::draw(VkCommandBuffer commandBuffer) {
-    // All vertices and indices are stored in single buffers, so we only need to bind once
-    VkDeviceSize offsets[1] = {0};
-    vkCmdBindVertexBuffers(commandBuffer, 0, 1, &mVertexBuffer->getBuffer()->buffer, offsets);
-    vkCmdBindIndexBuffer(commandBuffer, mIndexBuffer->getBuffer()->buffer, 0, VK_INDEX_TYPE_UINT32);
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout, 0, 1,
-                            &mTextureImage->mDescriptorSet, 0, nullptr);
-
-    vkCmdDrawIndexed(commandBuffer, 6, 1, 0, 0, 0);
-}
 }  // namespace Gange

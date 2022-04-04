@@ -2,20 +2,25 @@
 #define _GG_TEXTURE_IMAGE_H_
 
 #include <vulkan/vulkan.h>
-#include "GGBufferHandle.h"
-
 #include "tinygltf/stb_image.h"
+#include "GGVulkanDevice.h"
 
 namespace Gange {
-class GGTextureImage : public GGBufferHandle {
+class GGTextureImage {
 public:
-    explicit GGTextureImage(GGVulkanDevice *vulkan_device, VkQueue queue);
     GGTextureImage();
 
     virtual ~GGTextureImage();
 
     virtual void create();
 
+    void loadFromFile(const char *filePath, bool cubeFlag = false);
+
+    void loadCubeMap(const char *filePath);
+
+    std::pair<uint32_t, uint32_t> mSetLayoutBinding;
+
+    VkDescriptorSet mDescriptorSet;
     void setVulkanDeviceAndQueue(GGVulkanDevice *vulkan_device, VkQueue queue);
     uint32_t mWidth, mHeight;
     uint32_t mMipLevels = 1;
@@ -28,6 +33,8 @@ public:
     VkImageView mImageView;
     VkDescriptorImageInfo mDescriptorImageInfo;
     VkFormat mFormat;
+
+    GGVulkanDevice *mVulkanDevice = nullptr;
 
     void loadFromPixels(void *buffer, VkDeviceSize bufferSize, VkFilter filter = VK_FILTER_LINEAR,
                         VkImageUsageFlags imageUsageFlags = VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -54,17 +61,6 @@ private:
 
     void createTextureSampler();
 };
-
-class DBTextureImage2D : public GGTextureImage {
-public:
-    DBTextureImage2D();
-    DBTextureImage2D(GGVulkanDevice *vulkan_device, VkQueue queue);
-
-    void create();
-
-    void loadFromFile(const char *filePath);
-};
-
 }  // namespace Gange
 
 #endif  // !GG_TEXTURE_H_

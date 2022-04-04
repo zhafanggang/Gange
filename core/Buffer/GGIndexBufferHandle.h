@@ -14,6 +14,8 @@ public:
 
     virtual void generate() override;
 
+    void generate(std::vector<uint32_t> &indices);
+
     uint32_t mIndexCount = 0;
 };
 

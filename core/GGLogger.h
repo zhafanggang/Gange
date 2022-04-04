@@ -97,12 +97,12 @@ template <typename... Args> void Error(const char *message, const Args &...args)
 
 #define GG_ASSERT(expr) assert(expr)
 
-#define VK_CHECK_RESULT(f)                                                                                             \
-    {                                                                                                                  \
-        VkResult res = (f);                                                                                            \
-        if (res != VK_SUCCESS) {                                                                                       \
-            GG_ERROR("ERROR!", res);                                                                                   \
-            GG_ASSERT(res == VK_SUCCESS);                                                                              \
+#define VK_CHECK_RESULT(f)                                                                  \
+    {                                                                                                                 \
+        VkResult res = (f);                                                                               \
+        if (res != VK_SUCCESS) {                                                                     \
+            GG_ERROR("ERROR!", res);                                                            \
+            GG_ASSERT(res == VK_SUCCESS);                                                \
         }                                                                                                              \
     }
 

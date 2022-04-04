@@ -2,15 +2,11 @@
 #define _GG_VULKAN_BUFFER_H_
 
 #include <vector>
-
 #include "vulkan/vulkan.h"
 #include <assert.h>
 
 namespace Gange {
-/**
- * @brief Encapsulates access to a Vulkan buffer backed up by device memory
- * @note To be filled by an external source like the VulkanDevice
- */
+
 struct GGVulkanBuffer {
     VkDevice device;
     VkBuffer buffer = VK_NULL_HANDLE;

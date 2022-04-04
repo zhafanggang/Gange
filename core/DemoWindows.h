@@ -48,6 +48,8 @@ namespace demovulkan {
 			windowRect.right = (long)mWidth;
 			windowRect.bottom = (long)mHeight;
 
+			lastTimestamp = std::chrono::high_resolution_clock::now();
+
 			AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
 			std::string windowTitle = "Drakensberg8";
@@ -98,9 +100,18 @@ namespace demovulkan {
 		{
 			auto tStart = std::chrono::high_resolution_clock::now();
 			mRender->render();
+			frameCounter++;
 			auto tEnd = std::chrono::high_resolution_clock::now();
 			auto tDiff = std::chrono::duration<double, std::milli>(tEnd - tStart).count();
-		
+			float fpsTimer = (float)(std::chrono::duration<double, std::milli>(tEnd - lastTimestamp).count());
+
+			if (fpsTimer > 1000.0f)
+			{
+				uint32_t lastFPS = static_cast<uint32_t>((float)frameCounter * (1000.0f / fpsTimer));
+				std::cout << "FPS:" << lastFPS << std::endl;
+				frameCounter = 0;
+				lastTimestamp = tEnd;
+			}
 		}
 
 		static LRESULT CALLBACK  wndProc(HWND hWnd, UINT msgId, WPARAM wParam, LPARAM lParam)
@@ -119,7 +130,7 @@ namespace demovulkan {
 
 	private:
 		std::chrono::time_point<std::chrono::high_resolution_clock> lastTimestamp;
-
+		size_t frameCounter = 0;
 	};
 
 }  // namespace demovulkan

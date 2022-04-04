@@ -11,8 +11,9 @@
 #include "buffer/GGVulkanBuffer.h"
 
 #include "GangePlane.h"
-#define GG_ENABLE_SAMPLE_RATE_SHADING 1
-#define GG_ENABLE_MULTI_SAMPLE 1
+#include "GangeBox.h"
+
+#include "GGBuildSettings.h"
 
 namespace Gange {
 
@@ -36,7 +37,7 @@ private:
     bool enableValidationLayers = true;
     std::string title = "Vulkan Example";
     std::string name = "vulkanExample";
-    uint32_t apiVersion = VK_API_VERSION_1_0;
+    uint32_t apiVersion = VK_API_VERSION_1_1;
 
     std::vector<std::string> supportedExtensions;
     std::vector<const char *> enabledExtensions;
@@ -59,12 +60,6 @@ private:
     GGVulkanDevice *vulkanDevice = nullptr;
 
     GGVulkanSwapChain swapChain;
-
-    Renderable *mRenderable = nullptr;
-
-    GGVulkanGlTFModel *mGirlModel = nullptr;
-
-    Plane *mPlane = nullptr;
 
     // List of available frame buffers (same as number of swap chain images)
     std::vector<VkFramebuffer> frameBuffers;

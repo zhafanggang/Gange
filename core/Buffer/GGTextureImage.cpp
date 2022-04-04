@@ -1,5 +1,5 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include "GGTextureImage.h"
+#include "Buffer/GGTextureImage.h"
 #include "GGLogger.h"
 #include "GGVulkanTools.h"
 #include "GGVulkanInitializers.h"
@@ -7,9 +7,9 @@
 
 namespace Gange {
 
-GGTextureImage::GGTextureImage(GGVulkanDevice *vulkan_device, VkQueue queue) {
-    mVulkanDevice = vulkan_device;
-    mQueue = queue;
+GGTextureImage::GGTextureImage() {
+    mVulkanDevice = VulkanSingleHandle::getVulkanDevicePtr();
+    mQueue = VulkanSingleHandle::getVkQueue();
 }
 
 void GGTextureImage::setVulkanDeviceAndQueue(GGVulkanDevice *vulkan_device, VkQueue queue) {
@@ -17,20 +17,15 @@ void GGTextureImage::setVulkanDeviceAndQueue(GGVulkanDevice *vulkan_device, VkQu
     mQueue = queue;
 }
 
-GGTextureImage::GGTextureImage() {
-    mVulkanDevice = GGVulkanSingleHandle::getVulkanDevicePtr();
-    mQueue = GGVulkanSingleHandle::getVkQueue();
-}
-
 GGTextureImage::~GGTextureImage() {
     mVulkanDevice = nullptr;
 }
 
-void GGTextureImage::create() {
-    int texWidth, texHeight, texChannels;
-    unsigned char *pixels =
-        stbi_load("../Data/textures/lenna.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+void GGTextureImage::loadCubeMap(const char *filePath) {}
 
+void GGTextureImage::loadFromFile(const char *filePath, bool cubeFlag) {
+    int texWidth, texHeight, texChannels;
+    unsigned char *pixels = stbi_load(filePath, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     mWidth = static_cast<uint32_t>(texWidth);
     mHeight = static_cast<uint32_t>(texHeight);
     VkDeviceSize imageSize = mWidth * mHeight * 4;
@@ -41,7 +36,15 @@ void GGTextureImage::create() {
     if (!pixels) {
         throw std::runtime_error("failed to load texture image!");
     }
-    loadFromPixels(pixels, imageSize);
+    if (cubeFlag) {
+        // loadCubeMap();
+    } else {
+        loadFromPixels(pixels, imageSize);
+    }
+}
+
+void GGTextureImage::create() {
+    loadFromFile("../Data/textures/lenna.jpg");
 }
 
 void GGTextureImage::createImage(VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties) {
@@ -194,34 +197,6 @@ void GGTextureImage::updateDescriptor() {
     mDescriptorImageInfo.imageLayout = mImageLayout;
 }
 
-DBTextureImage2D::DBTextureImage2D(GGVulkanDevice *vulkan_device, VkQueue queue)
-    : GGTextureImage(vulkan_device, queue) {}
-
-void DBTextureImage2D::loadFromFile(const char *filePath) {
-    int texWidth, texHeight, texChannels;
-    unsigned char *pixels = stbi_load(filePath, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-
-    mWidth = static_cast<uint32_t>(texWidth);
-    mHeight = static_cast<uint32_t>(texHeight);
-    VkDeviceSize imageSize = mWidth * mHeight * 4;
-    mMipLevels = 1;
-    mFormat = VK_FORMAT_B8G8R8_UNORM;
-}
-
-void DBTextureImage2D::create() {
-    int texWidth, texHeight, texChannels;
-    unsigned char *pixels =
-        stbi_load("../data/textures/nirvana.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-
-    mWidth = static_cast<uint32_t>(texWidth);
-    mHeight = static_cast<uint32_t>(texHeight);
-    VkDeviceSize imageSize = mWidth * mHeight * 4;
-    mMipLevels = 1;
-    mFormat = VK_FORMAT_B8G8R8_UNORM;
-
-    loadFromPixels(pixels, imageSize);
-}
-
 void GGTextureImage::loadFromPixels(void *buffer, VkDeviceSize bufferSize, VkFilter filter,
                                     VkImageUsageFlags imageUsageFlags, VkImageLayout imageLayout) {
     assert(buffer);
@@ -364,7 +339,5 @@ void GGTextureImage::loadFromPixels(void *pixels, VkDeviceSize bufferSize, VkFor
     mMipLevels = 1;
     loadFromPixels(pixels, bufferSize, filter, imageUsageFlags, imageLayout);
 }
-
-DBTextureImage2D::DBTextureImage2D() {}
 
 }  // namespace Gange

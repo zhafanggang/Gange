@@ -2,13 +2,16 @@
 #include "GGVulkanTools.h"
 
 namespace Gange {
-Camera::Camera() {
-    mFOVy = Radian(Degree(45.0f));
+Camera::Camera(CameraType cameraType)
+    : mCameraType(cameraType) {
+    mFOVy = Radian(Degree(60.0f));
     mNearDist = 1.0f;
     mFarDist = 256.0f;
     mAspect = 1.77778f;
     mViewportWidth = 1280.f;
     mViewportHeight = 720.f;
+    mRadius = 173.2f;
+    mMoveTo = mRolePos = Vector3(0.0f, 0.0f, 0.0f);
 }
 
 Camera::~Camera() {}
@@ -37,6 +40,37 @@ void Camera::setEye(const Vector3 &vec) {
     mEye = vec;
 }
 
+void Camera::setRadius(Real radius) {
+    mRadius = radius;
+    updateView();
+}
+
+void Camera::setMoveTo(const Vector3 &vec) {
+    mMoveTo = vec;
+}
+
+bool Camera::getMovedStatus() {
+    Vector3 dir = mMoveTo - mRolePos;
+    if (dir.length() == 0) {
+        return false;
+    } else if (dir.length() < 1) {
+        mRolePos = mMoveTo;
+    } else {
+        dir.normalise();
+        mRolePos += dir * (10.0f / 60.0f);
+    }
+    updateView();
+    return true;
+}
+
+void Camera::updateView() {
+    Vector3 dir = mTarget - mEye;
+    dir.normalise();
+    mTarget = mRolePos;
+    mEye = mTarget - mRadius * dir;
+    updateViewMat();
+}
+
 void Camera::setTarget(Real x, Real y, Real z) {
     mTarget.x = x;
     mTarget.y = y;
@@ -51,8 +85,16 @@ const Vector3 &Camera::getEye() {
     return mEye;
 }
 
+const Vector3 &Camera::getRolePos() {
+    return mRolePos;
+}
+
 const Vector3 &Camera::getTarget() {
     return mTarget;
+}
+
+const Real &Camera::getRadius() {
+    return mRadius;
 }
 //-----------------------------------------------------------------------
 void Camera::setFarClipDistance(Real farPlane) {
@@ -78,6 +120,8 @@ Real Camera::getNearClipDistance() const {
 void Camera::updateViewMat() {
     Vector3 f = mTarget - mEye;
     f.normalise();
+
+    mDirection = f;
 
     Vector3 u = mUp;
     u.normalise();
@@ -121,10 +165,8 @@ void Camera::updateProjMat() {
 Ray Camera::createRayFromScreen(const Vector2 &pot) {
     Vector4 minWorld;
     Vector4 maxWorld;
-
     Vector4 screen(Real(pot.x), Real(pot.y), 0, 1);
     Vector4 screen1(Real(pot.x), Real(pot.y), 1, 1);
-
     unProject(screen, minWorld);
     unProject(screen1, maxWorld);
 
@@ -159,7 +201,6 @@ bool Camera::unProject(const Vector4 &screen, Vector4 &world) {
         return false;
     }
     world = v / v.w;
-    // world.y *= -1;
     return true;
 }
 
@@ -190,20 +231,30 @@ const Matrix4 &Camera::getProjMat() {
     return mProjMatrix;
 }
 
-void Camera::rotateView(const Vector3 &axis, Real angle) {
+void Camera::rotateViewX(Real angle) {
     Real len(0);
     Matrix4 mat = Matrix4::IDENTITY;
-    if (axis.x != 0) {
-        mat.rotateXYZ(angle, mRight);
-    } else {
-        mat.rotateXYZ(angle, axis);
-    }
-    Matrix4 mat2 = mat.transpose();
+    mat.rotateXYZ(angle, mRight);
+    mDirection = mat * mDirection;
+    mDirection.normalise();
+    mUp = mat * mUp;
+    mUp.normalise();
+    mRight = mDirection.crossProduct(mUp);
+    mRight.normalise();
+    len = (mEye - mTarget).length();
+    mEye = mTarget - mDirection * len;
+    updateViewMat();
+}
 
-    mDirection = mat2 * mDirection;
+void Camera::rotateViewY(Real angle) {
+    Real len(0);
+    Matrix4 mat = Matrix4::IDENTITY;
+    mat.rotateXYZ(angle, Vector3(0, 1, 0));
+
+    mDirection = mat * mDirection;
     mDirection.normalise();
 
-    mUp = mat2 * mUp;
+    mUp = mat * mUp;
     mUp.normalise();
 
     mRight = mDirection.crossProduct(mUp);

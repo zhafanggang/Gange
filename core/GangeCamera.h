@@ -8,7 +8,9 @@
 namespace Gange {
 class Camera {
 public:
-    Camera();
+    enum CameraType { thirdperson, firstperson };
+    CameraType mCameraType;
+    Camera(CameraType cameraType = firstperson);
 
     ~Camera();
 
@@ -22,9 +24,19 @@ public:
 
     void setTarget(const Vector3 &vec);
 
+    void setRadius(Real radius);
+
+    const Vector3 &getRolePos();
+
+    void setMoveTo(const Vector3 &vec);
+
+    bool getMovedStatus();
+
     const Vector3 &getEye();
 
     const Vector3 &getTarget();
+
+    const Real &getRadius();
 
     void setWindowSize(Real x, Real y);
 
@@ -42,7 +54,9 @@ public:
 
     void scaleCameraByPos(const Vector3 &pos, Real persent);
 
-    virtual void rotateView(const Vector3 &pos, Real angle);
+    virtual void rotateViewX(Real angle);
+
+    virtual void rotateViewY(Real angle);
 
     const Matrix4 &getProjMat();
 
@@ -52,7 +66,13 @@ public:
 
     void updateProjMat();
 
+    void updateView();
+
 protected:
+    Vector3 mRolePos;
+    Vector3 mMoveTo;
+
+    Real mRadius = 10.0f;
     /// Whether to yaw around a fixed axis.
     bool mYawFixed = true;
     /// Fixed axis to yaw around
@@ -72,10 +92,10 @@ protected:
 
     Real mViewportWidth, mViewportHeight;
 
-private:
+protected:
     Vector3 mEye;
     Vector3 mTarget;
-    Vector3 mUp = Vector3(0.0f, 1.0f, 0.01f);
+    Vector3 mUp = Vector3(0.0f, 1.0f, 0.0f);
     Vector3 mRight = Vector3(1.0f, 0.0f, 0.0f);
     Vector3 mDirection;
 

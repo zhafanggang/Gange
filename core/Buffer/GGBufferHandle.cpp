@@ -4,7 +4,7 @@
 namespace Gange {
 GGBufferHandle::GGBufferHandle() {
     mBuffer = new GGVulkanBuffer();
-    mVulkanDevice = GGVulkanSingleHandle::getVulkanDevicePtr();
+    mVulkanDevice = VulkanSingleHandle::getVulkanDevicePtr();
 }
 
 GGBufferHandle::~GGBufferHandle() {

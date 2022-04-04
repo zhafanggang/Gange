@@ -3,12 +3,14 @@
 
 #include "GGBufferHandle.h"
 #include "GGVulkanBuffer.h"
-#include "Math/GGVector3.h"
+#include "Math/GGVector4.h"
 
 namespace Gange {
 
 struct Vertex {
     Vector3 pos;
+    Vector3 normal;
+	Vector4 color;
     Vector2 uv;
 };
 
@@ -21,12 +23,9 @@ public:
 
     virtual void generate() override;
 
-    void create();
+    virtual void generate(std::vector<Vertex> &vertices);
 
-    VkPipelineVertexInputStateCreateInfo mInputState;
-
-    std::vector<VkVertexInputBindingDescription> mBindingDescriptions;
-    std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
+    uint32_t mVerticesCount;
 };
 
 }  // namespace Gange

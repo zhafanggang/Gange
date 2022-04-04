@@ -1,7 +1,7 @@
 #ifndef _GG_CAMERA_CONTROLLER_H_
 #define _GG_CAMERA_CONTROLLER_H_
 #include "GangeCamera.h"
-
+#include "GGSingleton.h"
 #include <Windows.h>
 
 namespace Gange {
@@ -17,12 +17,16 @@ public:
 
     Camera *getCamera();
 
+    Camera *getCameraSkybox();
+
     void handleMouseMove(Real x, Real y);
 
     Vector3 calcIntersectPoint(Ray &ray);
 
 private:
     Vector2 mousePos;
+
+    bool is3rd = false;
 
     struct {
         bool left = false;
@@ -33,6 +37,7 @@ private:
     Vector3 mButtonRot;
 
     Camera mCamera;
+    Camera mSkyBoxCamera;
 };
 }  // namespace Gange
 

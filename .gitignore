@@ -3,3 +3,7 @@
 
 # misc 
 .DS_Store
+
+#vscode
+.vscode/*
+!.vscode/launch.json

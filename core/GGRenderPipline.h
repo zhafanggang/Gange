@@ -2,26 +2,38 @@
 #define _GG_RENDER_PIPLINE_H_
 
 #include <vulkan/vulkan.h>
-#include "GGFastArray.h"
-#include "GGRenderable.h"
+#include <vector>
+#include "GGUniformManager.h"
+#include "GGVaoManager.h"
+#include "GGShaderManager.h"
 
 namespace Gange {
 class GGRenderPipline {
 public:
-    explicit GGRenderPipline(Renderable *renderable, VkRenderPass renderPass, VkSampleCountFlagBits sampleCount);
+    explicit GGRenderPipline(VkRenderPass renderPass, VkSampleCountFlagBits sampleCount);
     ~GGRenderPipline();
 
     void initialize();
 
-    GGFastArray<VkPipeline> mPiplines;
+	void buildCommandBuffers(VkCommandBuffer commandBuffer);
+
+	void update();
+
+    std::vector<VkPipeline> mPiplines;
 
     VkRenderPass mRenderPass;
 
-    Renderable *mRenderable;
+	UniformManager *mUniformBufferManger = nullptr;
+
+	VaoManager *mVaoManager = nullptr;
+
+	ShaderManager* mShaderManager = nullptr;
 
     VkSampleCountFlagBits mSampleCount;
 
     VkPipelineCache mPipelineCache = VK_NULL_HANDLE;
+
+	GGUniformBufferHandle* uniformBuffer;
 };
 
 }  // namespace Gange
