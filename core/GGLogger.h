@@ -7,6 +7,8 @@
 #include <memory>
 #include <spdlog/spdlog.h>
 #include <vulkan/vulkan.h>
+#include <spdlog/cfg/env.h>  // support for loading levels from the environment variable
+#include <spdlog/fmt/ostr.h> // support for user defined types
 
 namespace Gange {
 class DefaultSink : public spdlog::sinks::sink {
@@ -18,7 +20,7 @@ public:
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
 
 private:
-    std::shared_ptr<spdlog::logger> default_logger_;
+    std::shared_ptr<spdlog::logger> mDefaultSink;
 };
 
 class Logger {

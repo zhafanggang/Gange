@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <algorithm>
+#include <iosfwd>
+#include <cmath>
 
 namespace Gange {
 class Radian {

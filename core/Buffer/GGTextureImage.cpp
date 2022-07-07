@@ -44,7 +44,7 @@ void GGTextureImage::loadFromFile(const char *filePath, bool cubeFlag) {
 }
 
 void GGTextureImage::create() {
-    loadFromFile("../Data/textures/lenna.jpg");
+    loadFromFile("../../../data/textures/lenna.jpg");
 }
 
 void GGTextureImage::createImage(VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties) {

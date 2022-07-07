@@ -1,31 +1,29 @@
 #include "GGRenderBase.h"
+#include "GGRenderSystemBase.h"
 #include "GGRenderSystemVulkan.h"
+#include "GGSingleton.h"
 #include <mutex>
 
 namespace Gange {
 
 void GGRenderBase::initialize() {
-    if (nullptr == mRenderSystem) {
-        GGRenderSystemVulkan *render_system_vulkan_ = new GGRenderSystemVulkan();
-        mRenderSystem = (GGRenderSystemBase *) render_system_vulkan_;
-    }
-    mRenderSystem->initialize();
+    Singleton<GGRenderSystemVulkan>::Get()->initialize();
 }
 
 void GGRenderBase::render() {
-    mRenderSystem->render();
+    Singleton<GGRenderSystemVulkan>::Get()->render();
 }
 
 void GGRenderBase::setTarget(HINSTANCE hInstance, HWND window) {
-    mRenderSystem->setTarget(hInstance, window);
+    Singleton<GGRenderSystemVulkan>::Get()->setTarget(hInstance, window);
 }
 
 void GGRenderBase::prepare() {
-    mRenderSystem->prepare();
+    Singleton<GGRenderSystemVulkan>::Get()->prepare();
 }
 
 void GGRenderBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    mRenderSystem->handleMessages(hWnd, uMsg, wParam, lParam);
+    Singleton<GGRenderSystemVulkan>::Get()->handleMessages(hWnd, uMsg, wParam, lParam);
 }
 
 GGRenderBase::GGRenderBase() {}

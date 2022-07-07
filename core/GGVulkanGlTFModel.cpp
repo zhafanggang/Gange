@@ -17,11 +17,11 @@ GGVulkanGlTFModel::~GGVulkanGlTFModel() {}
 void GGVulkanGlTFModel::initialize() {
 	if (mProtagonist)
 	{
-		loadglTFFile("../data/models/Alice/Alice.gltf");
+		loadglTFFile("../../../data/models/Alice/Alice.gltf");
 	}
 	else
 	{
-		loadglTFFile("../data/models/samplebuilding.gltf");
+		loadglTFFile("../../../data/models/samplebuilding.gltf");
 	}
 }
 

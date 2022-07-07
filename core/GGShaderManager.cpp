@@ -23,8 +23,8 @@ namespace Gange {
 	{
 		mShaderStages.resize(2);
 
-		mShaderStages[0] = loadShader("../data/shaders/phong/vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-		mShaderStages[1] = loadShader("../data/shaders/phong/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+		mShaderStages[0] = loadShader("../../../data/shaders/phong/vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+		mShaderStages[1] = loadShader("../../../data/shaders/phong/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 	}
 
 	VkPipelineShaderStageCreateInfo ShaderManager::loadShader(std::string fileName, VkShaderStageFlagBits stage) {

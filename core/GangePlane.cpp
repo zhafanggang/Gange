@@ -19,7 +19,7 @@ void Plane::initialize() {
     mIndices = {0, 1, 2, 2, 3, 0};
 
     loadVao(mVextices, mIndices);
-    char *imagePath = "../data/textures/model/floor.jpg";
+    char *imagePath = "../../../data/textures/model/floor.jpg";
 
     loadTexture(imagePath);
 }

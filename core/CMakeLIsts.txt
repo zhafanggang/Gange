@@ -1,0 +1,60 @@
+
+if(WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVK_USE_PLATFORM_WIN32_KHR -DNOMINMAX")
+endif()
+
+set(EXTERNAL_INCLUDE_DIR 
+    ${CMAKE_CURRENT_SOURCE_DIR}/
+	${CMAKE_CURRENT_SOURCE_DIR}/../external/
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/spdlog/include
+    ${GG_WORK_DIR}/include
+    )
+
+set(PUBLIC_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Public)
+
+file(GLOB GG_RENDER_HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+list(APPEND CORE_HEADER_FILES ${GG_RENDER_HEADER_FILES})
+
+file(GLOB GG_RENDER_PUBLIC_HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/Public/*.h")
+list(APPEND CORE_HEADER_FILES ${GG_RENDER_PUBLIC_HEADER_FILES})
+
+file(GLOB GG_RENDER_SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+list(APPEND CORE_SOURCE_FILES ${GG_RENDER_SOURCE_FILES})
+
+##### recursively add files to their own folders to keep the directory structure #####
+############################################################
+function( add_filtered_h filterName fileString )
+	file(GLOB TMP_FILES ${fileString})
+	set(CORE_HEADER_FILES ${CORE_HEADER_FILES} ${TMP_FILES} PARENT_SCOPE)
+	source_group(${filterName} FILES ${TMP_FILES})
+endfunction( add_filtered_h )
+
+function( add_filtered_src filterName fileString )
+	file(GLOB TMP_FILES ${fileString})
+	set(CORE_SOURCE_FILES ${CORE_SOURCE_FILES} ${TMP_FILES} PARENT_SCOPE)
+	source_group(${filterName} FILES ${TMP_FILES})
+endfunction( add_filtered_src )
+
+function( add_filtered_std relativePath )
+	string(REPLACE "/" "\\" filterPart ${relativePath})
+	add_filtered_h("Header Files\\${filterPart}" "${CMAKE_CURRENT_SOURCE_DIR}/${relativePath}/*.h")
+	add_filtered_h("Header Files\\${filterPart}" "${CMAKE_CURRENT_SOURCE_DIR}/${relativePath}/*.inl")
+	set(CORE_HEADER_FILES ${CORE_HEADER_FILES} PARENT_SCOPE)
+	add_filtered_src("Source Files\\${filterPart}" "${CMAKE_CURRENT_SOURCE_DIR}/${relativePath}/*.cpp")
+	set(CORE_SOURCE_FILES ${CORE_SOURCE_FILES} PARENT_SCOPE)
+endfunction( add_filtered_std )
+######################################## done ########################################
+
+add_filtered_std("Buffer")
+add_filtered_std("Math")
+
+add_LIBRARY(GangeCore
+   SHARED
+   ${CORE_HEADER_FILES}
+   ${CORE_SOURCE_FILES})
+
+if(WIN32)
+   target_link_libraries(GangeCore PRIVATE ${Vulkan_LIBRARY} ${WINLIBS})
+endif()
+
+target_include_directories(GangeCore PUBLIC ${PUBLIC_INCLUDE_DIR} PRIVATE ${EXTERNAL_INCLUDE_DIR})

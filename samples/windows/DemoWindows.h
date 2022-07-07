@@ -3,6 +3,7 @@
 
 #include <Windows.h>
 #include <iostream>
+#include <chrono>
 #include "GGRenderBase.h"
 
 namespace demovulkan {
@@ -15,8 +16,6 @@ namespace demovulkan {
 		int         mHeight;
 		HINSTANCE   mHInstance;
 		HWND		mWindow;
-		 
-
 	public:
 		explicit DBWindow(int width, int height)
 		{

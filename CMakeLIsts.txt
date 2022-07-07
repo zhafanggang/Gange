@@ -5,8 +5,6 @@ project(Gange)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
 
@@ -14,86 +12,47 @@ set(GG_TEMPLATES_DIR "${PROJECT_SOURCE_DIR}/CMake/Templates")
 
 set(GG_WORK_DIR ${PROJECT_BINARY_DIR})
 
-set(VULKAN_INCLUDE_DIR $ENV{VULKAN_SDK}/Include)
-
-set(VULKAN_LIB_DIR $ENV{VULKAN_SDK}/Lib)
-
-set(VULKAN_DLL_DIR $ENV{VULKAN_SDK}/Bin)
-
 include(GGBuildSettings)
 
-##### recursively add files to their own folders to keep the directory structure #####
-############################################################
-function( add_filtered_h filterName fileString )
-	file(GLOB TMP_FILES ${fileString})
-	set(HEADER_FILES ${HEADER_FILES} ${TMP_FILES} PARENT_SCOPE)
-	source_group(${filterName} FILES ${TMP_FILES})
-endfunction( add_filtered_h )
-
-function( add_filtered_src filterName fileString )
-	file(GLOB TMP_FILES ${fileString})
-	set(SOURCE_FILES ${SOURCE_FILES} ${TMP_FILES} PARENT_SCOPE)
-	source_group(${filterName} FILES ${TMP_FILES})
-endfunction( add_filtered_src )
-
-function( add_filtered_std relativePath )
-	string(REPLACE "/" "\\" filterPart ${relativePath})
-	add_filtered_h("Header Files\\${filterPart}" "${CMAKE_CURRENT_SOURCE_DIR}/Core/${relativePath}/*.h")
-	add_filtered_h("Header Files\\${filterPart}" "${CMAKE_CURRENT_SOURCE_DIR}/Core/${relativePath}/*.inl")
-	set(HEADER_FILES ${HEADER_FILES} PARENT_SCOPE)
-	add_filtered_src("Source Files\\${filterPart}" "${CMAKE_CURRENT_SOURCE_DIR}/Core/${relativePath}/*.cpp")
-	set(SOURCE_FILES ${SOURCE_FILES} PARENT_SCOPE)
-endfunction( add_filtered_std )
-######################################## done ########################################
-
-
-if (APPLE_IOS)
-  # Set static early for proper dependency detection
-  set(GG_STATIC TRUE)
+if(WIN32)
+# Use FindVulkan module added with CMAKE 3.7
+if (NOT CMAKE_VERSION VERSION_LESS 3.7.0)
+	message(STATUS "Using module to find Vulkan")
+	find_package(Vulkan)
 endif()
 
-if(WIN32)
-    #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS") 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVK_USE_PLATFORM_WIN32_KHR -DNOMINMAX")
+IF (NOT Vulkan_FOUND)
+	message(FATAL_ERROR "Could not find Vulkan library!")
+ELSE()
+	message(STATUS ${Vulkan_LIBRARY})
 ENDIF()
 
-set(EXTERNAL_INCLUDE_DIR 
-    ${VULKAN_INCLUDE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/spdlog/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/
-    ${GG_WORK_DIR}/include
-    )
+set(VULKAN_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../VulkanSDK/1.3.216.0)
 
-file(GLOB GG_RENDER_HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/Core/*.h")
-list(APPEND HEADER_FILES ${GG_RENDER_HEADER_FILES})
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
 
-file(GLOB GG_RENDER_SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/Core/*.cpp")
-list(APPEND SOURCE_FILES ${GG_RENDER_SOURCE_FILES})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
-add_filtered_std("Buffer")
-add_filtered_std("Math")
+set(VULKAN_INCLUDE_DIR ${VULKAN_PATH}/Include)
 
-link_directories(
-    ${VULKAN_LIB_DIR}
-    )
+set(VULKAN_LIB_DIR ${VULKAN_PATH}/Lib)
 
-SET(PROJECT_NAME "GangeCore")
+set(VULKAN_DLL_DIR ${VULKAN_PATH}/Bin)
 
 set(EXTERN_LIBRARY vulkan-1.lib)
-
-add_executable(${PROJECT_NAME}
-   ${HEADER_FILES}
-   ${SOURCE_FILES})
-
-target_include_directories(${PROJECT_NAME} PUBLIC ${EXTERNAL_INCLUDE_DIR})
-
-target_link_libraries(${PROJECT_NAME} PUBLIC ${EXTERN_LIBRARY})
 
 set(OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build/")
 
 set(EXECUTABLE_OUTPUT_PATH "${OUTPUT_PATH}/bin/")
 
-set(LIBRARY_OUTPUT_PATH "${OUTPUT_PATH}/lib/")
+set(LIBRARY_OUTPUT_PATH "${OUTPUT_PATH}/bin/")
 
 file(COPY ${VULKAN_DLL_DIR}/ DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug)
+
+endif()
+
+add_subdirectory(core)
+
+set (GANGE_CORE_LIBS ${GANGE_CORE_LIBS} GangeCore)
+
+add_subdirectory(samples)
