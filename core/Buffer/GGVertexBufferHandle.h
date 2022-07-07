@@ -3,7 +3,7 @@
 
 #include "GGBufferHandle.h"
 #include "GGVulkanBuffer.h"
-#include "Math/GGVector4.h"
+#include "math/GGVector4.h"
 
 namespace Gange {
 

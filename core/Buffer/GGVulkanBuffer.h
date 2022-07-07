@@ -2,7 +2,7 @@
 #define _GG_VULKAN_BUFFER_H_
 
 #include <vector>
-#include "vulkan/vulkan.h"
+#include "AndroidTools.h"
 #include <assert.h>
 
 namespace Gange {

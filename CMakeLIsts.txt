@@ -49,7 +49,12 @@ set(LIBRARY_OUTPUT_PATH "${OUTPUT_PATH}/bin/")
 
 file(COPY ${VULKAN_DLL_DIR}/ DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug)
 
+elseif(ANDROID)
+set(ANDROID_NATIVE_DIR 
+/Users/berg/Library/Android/sdk/ndk/21.0.6113669/sources/android/native_app_glue)
 endif()
+
+include_directories(${ANDROID_NATIVE_DIR})
 
 add_subdirectory(core)
 

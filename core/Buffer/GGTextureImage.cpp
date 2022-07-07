@@ -1,5 +1,5 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include "Buffer/GGTextureImage.h"
+#include "buffer/GGTextureImage.h"
 #include "GGLogger.h"
 #include "GGVulkanTools.h"
 #include "GGVulkanInitializers.h"

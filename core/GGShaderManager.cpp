@@ -31,8 +31,8 @@ namespace Gange {
 		VkPipelineShaderStageCreateInfo shaderStage = {};
 		shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStage.stage = stage;
-#if defined(VK_USE_PLATFORM_ANDROID_KHR)
-		shaderStage.module = tools::loadShader(androidApp->activity->assetManager, fileName.c_str(), device);
+#if defined(__ANDROID__)
+		//shaderStage.module = Vulkantools::loadShader(VulkanSingleHandle::getAssetManager(), fileName.c_str(), VulkanSingleHandle::getVulkanDevice().logicalDevice);
 #else
 		shaderStage.module = Vulkantools::loadShader(fileName.c_str(), VulkanSingleHandle::getVulkanDevice().logicalDevice);
 #endif

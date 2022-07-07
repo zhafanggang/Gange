@@ -9,22 +9,15 @@
 
 #include "vulkan/vulkan.h"
 #include "GGVulkanDevice.h"
-
-#include "Buffer/GGTextureImage.h"
-#define TINYGLTF_NO_INCLUDE_STB_IMAGE
-#define TINYGLTF_NO_STB_IMAGE_WRITE
-#ifdef VK_USE_PLATFORM_ANDROID_KHR
-#define TINYGLTF_ANDROID_LOAD_FROM_ASSETS
-#endif
-#include "tinygltf/tiny_gltf.h"
+#include "buffer/GGTextureImage.h"
 #include "buffer/GGUniformBufferHandle.h"
-
-#include "Math/GGMatrix4.h"
-
-#if defined(__ANDROID__)
-#include <android/asset_manager.h>
-#endif
+#include "math/GGMatrix4.h"
 #include "GGRenderable.h"
+
+namespace tinygltf {
+class Model;
+class Node;
+};
 
 namespace Gange {
 class GGVulkanGlTFModel : public Renderable {
@@ -41,7 +34,7 @@ public:
 
     ~GGVulkanGlTFModel();
 
-    void initialize();
+    void initialize() override;
 
     void loadglTFFile(std::string filename);
     void loadImages(tinygltf::Model &input);

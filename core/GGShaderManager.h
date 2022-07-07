@@ -8,6 +8,7 @@ namespace Gange {
 class ShaderManager {
 public:
 	ShaderManager();
+	
 	~ShaderManager();
 
 	std::vector<VkPipelineShaderStageCreateInfo> &getShaderStages();

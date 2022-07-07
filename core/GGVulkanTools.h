@@ -1,10 +1,10 @@
 #ifndef _GG_VULKAN_TOOLS_H_
 #define _GG_VULKAN_TOOLS_H_
 
-#include "vulkan/vulkan.h"
 #include <vector>
 #include <fstream>
-#include "Math/GGMatrix4.h"
+#include "math/GGMatrix4.h"
+#include "AndroidTools.h"
 
 namespace Gange {
 
@@ -12,7 +12,11 @@ namespace Vulkantools {
 
 VkBool32 getSupportedDepthFormat(VkPhysicalDevice physicalDevice, VkFormat *depthFormat);
 
+#if defined(__ANDROID__)
+VkShaderModule loadShader(AAssetManager* assetManager, const char *fileName, VkDevice device);
+#else
 VkShaderModule loadShader(const char *fileName, VkDevice device);
+#endif
 
 void setImageLayout(VkCommandBuffer cmdbuffer, VkImage image, VkImageLayout oldImageLayout,
                     VkImageLayout newImageLayout, VkImageSubresourceRange subresourceRange,

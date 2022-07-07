@@ -2,6 +2,7 @@
 #define _GG_VULKAN_SINGLE_HANDLE_H_
 #include "GGVulkanDevice.h"
 #include "GGCameraController.h"
+#include "AndroidTools.h"
 
 namespace Gange {
 class VulkanSingleHandle {
@@ -18,7 +19,18 @@ public:
 
     static VkQueue getVkQueue();
 
+#if defined(__ANDROID__)
+    static void setAssetManager(AAssetManager *assetManager);
+
+    static AAssetManager *getAssetManager();
+
 private:
+
+    static AAssetManager *mAssetManager;
+#endif
+
+private:
+
     static GGVulkanDevice *mVulkanDevice;
 
     static VkQueue mQueue;

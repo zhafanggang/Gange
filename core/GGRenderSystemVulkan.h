@@ -21,11 +21,11 @@ namespace Gange {
 
 class GGRenderSystemVulkan : public GGRenderSystemBase {
 public:
-    void initialize();
+    void initialize() override;
 
-    void prepare();
+    void prepare()override;
 
-    void render();
+    void render()override;
 
     void windowResize() override;
 

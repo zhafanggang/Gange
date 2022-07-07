@@ -1,7 +1,11 @@
 #define TINYGLTF_IMPLEMENTATION
+#define TINYGLTF_NO_INCLUDE_STB_IMAGE
+#define TINYGLTF_NO_STB_IMAGE_WRITE
+#include <tinygltf/stb_image.h>
+#include <tinygltf/tiny_gltf.h>
 #include "GGVulkanGlTFModel.h"
 #include "GGVulkanSingleHandle.h"
-#include "Math/GGQuaternion.h"
+#include "math/GGQuaternion.h"
 #include <fstream>
 #include <iomanip>
 
@@ -286,7 +290,7 @@ void GGVulkanGlTFModel::loadglTFFile(std::string filename) {
     std::string error, warning;
 
 #if defined(__ANDROID__)
-    tinygltf::asset_manager = androidApp->activity->assetManager;
+    //tinygltf::asset_manager = VulkanSingleHandle::getAssetManager();
 #endif
     bool fileLoaded = gltfContext.LoadASCIIFromFile(&glTFInput, &error, &warning, filename);
 

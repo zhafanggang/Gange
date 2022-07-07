@@ -1,6 +1,24 @@
 #include "GGVulkanSingleHandle.h"
 
 namespace Gange {
+
+#if defined(__ANDROID__)
+
+AAssetManager *VulkanSingleHandle::mAssetManager = nullptr;
+
+void VulkanSingleHandle::setAssetManager(AAssetManager *assetManager)
+{
+    mAssetManager = assetManager;
+}
+
+AAssetManager *VulkanSingleHandle::getAssetManager()
+{
+    return mAssetManager;
+}
+
+#endif
+
+
 GGVulkanDevice VulkanSingleHandle::getVulkanDevice() {
     return *mVulkanDevice;
 };

@@ -60,6 +60,8 @@ void GGCameraController::handleMouseMove(Real x, Real y) {
     mousePos = Vector2((Real) x, (Real) y);
 }
 
+#ifdef _WIN32
+
 void GGCameraController::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
         case WM_LBUTTONDOWN: {
@@ -136,6 +138,8 @@ void GGCameraController::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
         }
     }
 }
+
+#endif
 
 Vector3 GGCameraController::calcIntersectPoint(Ray &ray) {
     Vector3 pos = ray.getOrigin();

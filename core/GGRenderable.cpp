@@ -1,7 +1,7 @@
 #include "GGRenderable.h"
 #include "GGVulkanTools.h"
 #include "GGVulkanSingleHandle.h"
-#include "Buffer/GGTextureImage.h"
+#include "buffer/GGTextureImage.h"
 
 namespace Gange {
 Renderable::Renderable() {

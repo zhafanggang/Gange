@@ -6,6 +6,7 @@
 #include "GGVulkanInitializers.h"
 #include "GGVulkanTools.h"
 #include "GGVulkanSingleHandle.h"
+#include "AndroidTools.h"
 
 namespace Gange {
 
@@ -16,7 +17,6 @@ void GGRenderSystemVulkan::destroyCommandBuffers() {
 }
 
 GGRenderSystemVulkan::~GGRenderSystemVulkan() {
-
     delete vulkanDevice;
 }
 
@@ -62,6 +62,12 @@ void GGRenderSystemVulkan::buildCommandBuffers() {
 
 void GGRenderSystemVulkan::initialize() {
     GGRenderSystemBase::initialize();
+
+#if defined(__ANDROID__)
+	// Vulkan library is loaded dynamically on Android
+	bool libLoaded = vks::android::loadVulkanLibrary();
+	GG_ASSERT(libLoaded);
+#endif
 
     createInstance();
     pickPhysicalDevice();
@@ -303,8 +309,8 @@ void GGRenderSystemVulkan::createCommandBuffers() {
 void GGRenderSystemVulkan::initSwapchain() {
 #if defined(_WIN32)
     swapChain.initSurface(windowInstance, windowHandle);
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
-    swapChain.initSurface(androidApp->window);
+#elif defined(__ANDROID__)
+    swapChain.initSurface(mNativeWindow);
 #elif (defined(VK_USE_PLATFORM_IOS_MVK) || defined(VK_USE_PLATFORM_MACOS_MVK))
     swapChain.initSurface(view);
 #endif

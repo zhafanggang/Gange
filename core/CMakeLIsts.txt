@@ -1,6 +1,8 @@
 
 if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVK_USE_PLATFORM_WIN32_KHR -DNOMINMAX")
+elseif(ANDROID)
+	add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR -DVK_NO_PROTOTYPES)
 endif()
 
 set(EXTERNAL_INCLUDE_DIR 
@@ -48,13 +50,22 @@ endfunction( add_filtered_std )
 add_filtered_std("Buffer")
 add_filtered_std("Math")
 
+if(WIN32)
 add_LIBRARY(GangeCore
-   SHARED
+SHARED
+${CORE_HEADER_FILES}
+${CORE_SOURCE_FILES})
+elseif(ANDROID) 
+add_LIBRARY(GangeCore
+   STATIC
    ${CORE_HEADER_FILES}
    ${CORE_SOURCE_FILES})
+endif()
 
 if(WIN32)
    target_link_libraries(GangeCore PRIVATE ${Vulkan_LIBRARY} ${WINLIBS})
+elseif(ANDROID)
+	target_link_libraries(GangeCore PRIVATE android)
 endif()
 
-target_include_directories(GangeCore PUBLIC ${PUBLIC_INCLUDE_DIR} PRIVATE ${EXTERNAL_INCLUDE_DIR})
+target_include_directories(GangeCore PUBLIC ${PUBLIC_INCLUDE_DIR} ${ANDROID_NATIVE_DIR} PRIVATE ${EXTERNAL_INCLUDE_DIR})

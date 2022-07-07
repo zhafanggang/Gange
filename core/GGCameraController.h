@@ -2,8 +2,9 @@
 #define _GG_CAMERA_CONTROLLER_H_
 #include "GangeCamera.h"
 #include "GGSingleton.h"
+#ifdef _WIN32
 #include <Windows.h>
-
+#endif
 namespace Gange {
 
 class GGCameraController {
@@ -13,7 +14,11 @@ public:
     GGCameraController();
     ~GGCameraController();
 
+#ifdef _WIN32
+
     void handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+#endif
 
     Camera *getCamera();
 

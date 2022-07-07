@@ -2,7 +2,7 @@
 #define _GANGE_RAY_H_
 
 #include "GGPrerequisites.h"
-#include "Math/GGVector3.h"
+#include "math/GGVector3.h"
 
 namespace Gange {
 class _GGDllexport Ray {

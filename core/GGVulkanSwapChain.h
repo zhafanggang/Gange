@@ -1,11 +1,12 @@
 #ifndef _GG_VULKAN_SWAPCHAIN_H_
 #define _GG_VULKAN_SWAPCHAIN_H_
 
-#include <vulkan/vulkan.h>
+#include "AndroidTools.h"
 #include <vector>
 
 #ifdef __ANDROID__
-#include "VulkanAndroid.h"
+#include <android_native_app_glue.h>
+#include <android/configuration.h>
 #endif
 
 namespace Gange {

@@ -17,6 +17,8 @@ void GGRenderSystemBase::initialize() {}
 
 void GGRenderSystemBase::prepare() {}
 
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+
 void GGRenderSystemBase::setTarget(HINSTANCE hInstance, HWND window) {
     this->windowInstance = hInstance;
     this->windowHandle = window;
@@ -37,5 +39,12 @@ void GGRenderSystemBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
         mCameraController->handleMessages(hWnd, uMsg, wParam, lParam);
     }
 }
+
+#elif defined(__ANDROID__)
+void GGRenderSystemBase::setNativeWindow(ANativeWindow *nativeWindow)
+{
+    this->mNativeWindow = nativeWindow;
+}
+#endif
 
 }  // namespace Gange

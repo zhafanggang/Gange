@@ -1,7 +1,7 @@
 #ifndef _GANGE_BOX_H_
 #define _GANGE_BOX_H_
 
-#include "Math/GGVector3.h"
+#include "math/GGVector3.h"
 #include <vector>
 #include "GGRenderable.h"
 #include "GGVulkanSingleHandle.h"

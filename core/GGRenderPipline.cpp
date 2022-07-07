@@ -53,7 +53,9 @@ void GGRenderPipline::initialize() {
 
     VkGraphicsPipelineCreateInfo pipelineCI =
         initializers::pipelineCreateInfo(mVaoManager->mRenderVec[0]->mPipelineLayout, mRenderPass, 0);
-    pipelineCI.pVertexInputState = &mVaoManager->getVertexInputState();
+     //TODO:
+    VkPipelineVertexInputStateCreateInfo inputState = mVaoManager->getVertexInputState();
+    pipelineCI.pVertexInputState = &inputState;
     pipelineCI.pInputAssemblyState = &inputAssemblyStateCI;
     pipelineCI.pRasterizationState = &rasterizationStateCI;
     pipelineCI.pColorBlendState = &colorBlendStateCI;

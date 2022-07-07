@@ -2,11 +2,12 @@
 #define _GG_RENDERABLE_H_
 
 #include <vector>
-#include "Buffer/GGIndexBufferHandle.h"
-#include "Buffer/GGVertexBufferHandle.h"
-#include "Buffer/GGTextureImage.h"
-#include "Math/GGMatrix4.h"
-#include "Buffer/GGUniformBufferHandle.h"
+#include "buffer/GGIndexBufferHandle.h"
+#include "buffer/GGVertexBufferHandle.h"
+#include "buffer/GGTextureImage.h"
+#include "math/GGMatrix4.h"
+#include "buffer/GGUniformBufferHandle.h"
+#include "AndroidTools.h"
 
 namespace Gange {
 

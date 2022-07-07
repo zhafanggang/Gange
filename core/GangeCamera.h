@@ -1,15 +1,18 @@
 #ifndef _GG_CAMERA_H_
 #define _GG_CAMERA_H_
 
-#include <Math/GGMatrix4.h>
+#include <math/GGMatrix4.h>
 #include "GangeRay.h"
 #include <iostream>
 
 namespace Gange {
 class Camera {
 public:
+
     enum CameraType { thirdperson, firstperson };
+
     CameraType mCameraType;
+
     Camera(CameraType cameraType = firstperson);
 
     ~Camera();
@@ -41,16 +44,16 @@ public:
     void setWindowSize(Real x, Real y);
 
     //-----------------------------------------------------------------------
-    void Camera::setFarClipDistance(Real farPlane);
+    void setFarClipDistance(Real farPlane);
 
     //-----------------------------------------------------------------------
-    Real Camera::getFarClipDistance() const;
+    Real getFarClipDistance() const;
 
     //-----------------------------------------------------------------------
-    void Camera::setNearClipDistance(Real nearPlane);
+    void setNearClipDistance(Real nearPlane);
 
     //-----------------------------------------------------------------------
-    Real Camera::getNearClipDistance() const;
+    Real getNearClipDistance() const;
 
     void scaleCameraByPos(const Vector3 &pos, Real persent);
 

@@ -1,8 +1,8 @@
 #ifndef _GG_TEXTURE_MANAGER_H_
 #define _GG_TEXTURE_MANAGER_H_
 #include "GGSingleton.h"
-#include "Buffer/GGTextureImage.h"
-#include "Buffer/GGUniformBufferHandle.h"
+#include "buffer/GGTextureImage.h"
+#include "buffer/GGUniformBufferHandle.h"
 #include "GGVulkanDevice.h"
 #include <vector>
 

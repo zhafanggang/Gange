@@ -14,9 +14,16 @@ class Matrix4;
 class Quaternion;
 class Radian;
 
-#define FORCEINLINE __forceinline
 
+
+
+#ifdef _WIN32
 #define _GGDllexport __declspec(dllexport)
+#define FORCEINLINE __forceinline
+#else
+#define _GGDllexport
+#define FORCEINLINE
+#endif
 
 #if OGRE_DOUBLE_PRECISION == 1
 /** Software floating point type.

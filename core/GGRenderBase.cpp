@@ -1,33 +1,42 @@
 #include "GGRenderBase.h"
-#include "GGRenderSystemBase.h"
 #include "GGRenderSystemVulkan.h"
 #include "GGSingleton.h"
+#include "GGVulkanSingleHandle.h"
 #include <mutex>
 
 namespace Gange {
 
-void GGRenderBase::initialize() {
+void RenderBase::initialize() {
     Singleton<GGRenderSystemVulkan>::Get()->initialize();
 }
 
-void GGRenderBase::render() {
+void RenderBase::render() {
     Singleton<GGRenderSystemVulkan>::Get()->render();
 }
 
-void GGRenderBase::setTarget(HINSTANCE hInstance, HWND window) {
-    Singleton<GGRenderSystemVulkan>::Get()->setTarget(hInstance, window);
-}
-
-void GGRenderBase::prepare() {
+void RenderBase::prepare() {
     Singleton<GGRenderSystemVulkan>::Get()->prepare();
 }
 
-void GGRenderBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+void RenderBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     Singleton<GGRenderSystemVulkan>::Get()->handleMessages(hWnd, uMsg, wParam, lParam);
 }
 
-GGRenderBase::GGRenderBase() {}
+void RenderBase::setTarget(HINSTANCE hInstance, HWND window) {
+    Singleton<GGRenderSystemVulkan>::Get()->setTarget(hInstance, window);
+}
 
-GGRenderBase::~GGRenderBase() {}
+#elif defined(__ANDROID__)
+void RenderBase::setTarget(ANativeWindow *nativeWindow,AAssetManager *assetManager)
+{
+    VulkanSingleHandle::setAssetManager(assetManager);
+    Singleton<GGRenderSystemVulkan>::Get()->setNativeWindow(nativeWindow);
+}
+#endif
+
+RenderBase::RenderBase() {}
+
+RenderBase::~RenderBase() {}
 
 }  // namespace Gange

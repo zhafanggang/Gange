@@ -4,11 +4,11 @@
 #include <Windows.h>
 #include <iostream>
 #include <chrono>
-#include "GGRenderBase.h"
+#include "RenderBase.h"
 
 namespace demovulkan {
 
-	Gange::GGRenderBase *mRender = NULL;
+	Gange::RenderBase *mRender = NULL;
 	class DBWindow
 	{
 	protected:
@@ -60,7 +60,7 @@ namespace demovulkan {
 			SetForegroundWindow(mWindow);
 			SetFocus(mWindow);
 
-			mRender = new Gange::GGRenderBase();
+			mRender = new Gange::RenderBase();
 
 			mRender->initialize();
 			mRender->setTarget(mHInstance, mWindow);

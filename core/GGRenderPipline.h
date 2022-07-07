@@ -1,7 +1,7 @@
 #ifndef _GG_RENDER_PIPLINE_H_
 #define _GG_RENDER_PIPLINE_H_
 
-#include <vulkan/vulkan.h>
+#include "AndroidTools.h"
 #include <vector>
 #include "GGUniformManager.h"
 #include "GGVaoManager.h"
