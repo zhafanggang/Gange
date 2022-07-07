@@ -93,9 +93,9 @@ void Renderable::buildCommandBuffers(VkCommandBuffer commandBuffer) {
     }
 }
 
-void Renderable::loadTexture(const std::vector<const char *> &fileName) {
+void Renderable::loadTexture(const std::vector<std::string> &fileName) {
     for (auto &imagePath : fileName) {
-        loadTexture(imagePath);
+        loadTexture(imagePath.c_str());
     }
 }
 

@@ -20,6 +20,10 @@ android {
         }
     }
 
+    sourceSets {
+        main.assets.srcDirs = ['assets']
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -40,6 +44,40 @@ android {
         viewBinding true
     }
 }
+
+task copyTask {
+    copy {
+        from '../../../../data/textures'
+        into "assets/textures/"
+        include 'lenna.jpg'
+    }
+
+    copy {
+        from '../../../../data/textures/cube'
+        into 'assets/textures/cube'
+        include '*.*'
+    }
+
+    copy {
+        from '../../../../data/textures/model'
+        into "assets/textures/"
+        include 'floor.jpg'
+    }
+
+    copy {
+        from '../../../../data/shaders/phong'
+        into 'assets/shaders/'
+        include '*.spv'
+    }
+
+    copy {
+        from '../../../../data/models/Alice'
+        into 'assets/models/Alice'
+        include '*.*'
+    }
+}
+
+preBuild.dependsOn copyTask
 
 dependencies {
 

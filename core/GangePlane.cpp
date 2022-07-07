@@ -1,4 +1,5 @@
 #include "GangePlane.h"
+#include "GGVulkanTools.h"
 
 namespace Gange {
 void Plane::initialize() {
@@ -19,9 +20,9 @@ void Plane::initialize() {
     mIndices = {0, 1, 2, 2, 3, 0};
 
     loadVao(mVextices, mIndices);
-    char *imagePath = "../../../data/textures/model/floor.jpg";
+    std::string imagePath =  getAssetPath() + "textures/floor.jpg";
 
-    loadTexture(imagePath);
+    loadTexture(imagePath.c_str());
 }
 
 }  // namespace Gange

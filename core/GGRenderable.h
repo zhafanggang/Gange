@@ -89,7 +89,7 @@ public:
 
     void loadVao(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices);
 
-    void loadTexture(const std::vector<const char *> &fileName);
+    void loadTexture(const std::vector<std::string> &fileName);
 
     void loadTexture(const char *fileName);
 

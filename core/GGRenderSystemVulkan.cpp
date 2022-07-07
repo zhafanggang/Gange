@@ -95,7 +95,6 @@ void GGRenderSystemVulkan::initialize() {
     VK_CHECK_RESULT(vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &semaphores.presentComplete));
 
     VK_CHECK_RESULT(vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &semaphores.renderComplete));
-
     submitInfo = initializers::submitInfo();
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.pWaitDstStageMask = &submitPipelineStages;
@@ -110,6 +109,7 @@ void GGRenderSystemVulkan::prepare() {
 #if GG_ENABLE_MULTI_SAMPLE
     mSampleCountFlagBits = getMaxUsableSampleCount();
 #endif
+
     initSwapchain();
     createCommandPool();
     setupSwapChain();
@@ -118,7 +118,6 @@ void GGRenderSystemVulkan::prepare() {
     setupDepthStencil();
     setupRenderPass();
     setupFrameBuffer();
-
     preparePipline();
 
     buildCommandBuffers();
@@ -320,14 +319,13 @@ void GGRenderSystemVulkan::createInstance() {
     if (enableValidationLayers && !checkValidationLayerSupport()) {
         throw std::runtime_error("validation layers requested, but not available!");
     }
-
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pApplicationName = "Hello Triangle";
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
     appInfo.pEngineName = "No Engine";
     appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.apiVersion = VK_API_VERSION_1_1;
+    appInfo.apiVersion = VK_API_VERSION_1_0;
 
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -354,6 +352,7 @@ void GGRenderSystemVulkan::createInstance() {
 
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
     if (enableValidationLayers) {
+        
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
         createInfo.ppEnabledLayerNames = validationLayers.data();
 
@@ -374,6 +373,10 @@ void GGRenderSystemVulkan::createInstance() {
     }
 
     VkResult po = vkCreateInstance(&createInfo, nullptr, &instance);
+
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+	vks::android::loadVulkanFunctions(instance);
+#endif
 }
 
 void GGRenderSystemVulkan::pickPhysicalDevice() {
@@ -383,7 +386,6 @@ void GGRenderSystemVulkan::pickPhysicalDevice() {
     if (deviceCount == 0) {
         throw std::runtime_error("failed to find GPUs with Vulkan support!");
     }
-
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 

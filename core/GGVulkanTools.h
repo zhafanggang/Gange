@@ -6,6 +6,8 @@
 #include "math/GGMatrix4.h"
 #include "AndroidTools.h"
 
+const std::string getAssetPath();
+
 namespace Gange {
 
 namespace Vulkantools {

@@ -1,4 +1,5 @@
 #include "GangeBox.h"
+#include "GGVulkanTools.h"
 
 namespace Gange {
 ModelBox::ModelBox(const Vector3 &halfSize) {}
@@ -78,8 +79,8 @@ void ModelBox::initialize() {
 
     loadVao(mVextices, mIndices);
 
-    char *imagePath = "../data/textures/lenna.jpg";
-    loadTexture(imagePath);
+    std::string imagePath =  getAssetPath() + "textures/lenna.jpg";
+    loadTexture(imagePath.c_str());
 
 	mModelMat.setTrans(Vector3(100,0.0,0.0));
 }
@@ -145,18 +146,18 @@ void ModelBox::initializeSkyBox() {
 
     loadVao(mVextices, mIndices);
 
-    std::vector<const char *> imagesPath;
-    char *imagePath = "../data/textures/cube/cube_negy.png";
+    std::vector<std::string> imagesPath;
+    std::string imagePath = getAssetPath() + "textures/cube/cube_negy.png";
     imagesPath.push_back(imagePath);
-    imagePath = "../data/textures/cube/cube_posx.png";
+    imagePath = getAssetPath() + "textures/cube/cube_posx.png";
     imagesPath.push_back(imagePath);
-    imagePath = "../data/textures/cube/cube_negz.png";
+    imagePath = getAssetPath() + "textures/cube/cube_negz.png";
     imagesPath.push_back(imagePath);
-    imagePath = "../data/textures/cube/cube_posy.png";
+    imagePath = getAssetPath() + "textures/cube/cube_posy.png";
     imagesPath.push_back(imagePath);
-    imagePath = "../data/textures/cube/cube_negx.png";
+    imagePath = getAssetPath() + "textures/cube/cube_negx.png";
     imagesPath.push_back(imagePath);
-    imagePath = "../data/textures/cube/cube_posz.png";
+    imagePath = getAssetPath() + "textures/cube/cube_posz.png";
     imagesPath.push_back(imagePath);
     loadTexture(imagesPath);
     flag = true;

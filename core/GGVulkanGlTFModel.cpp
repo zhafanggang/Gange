@@ -1,11 +1,13 @@
 #define TINYGLTF_IMPLEMENTATION
 #define TINYGLTF_NO_INCLUDE_STB_IMAGE
 #define TINYGLTF_NO_STB_IMAGE_WRITE
+#define TINYGLTF_ANDROID_LOAD_FROM_ASSETS
 #include <tinygltf/stb_image.h>
 #include <tinygltf/tiny_gltf.h>
 #include "GGVulkanGlTFModel.h"
 #include "GGVulkanSingleHandle.h"
 #include "math/GGQuaternion.h"
+#include "GGVulkanTools.h"
 #include <fstream>
 #include <iomanip>
 
@@ -21,11 +23,11 @@ GGVulkanGlTFModel::~GGVulkanGlTFModel() {}
 void GGVulkanGlTFModel::initialize() {
 	if (mProtagonist)
 	{
-		loadglTFFile("../../../data/models/Alice/Alice.gltf");
+		loadglTFFile(getAssetPath() + "models/Alice/Alice.gltf");
 	}
 	else
 	{
-		loadglTFFile("../../../data/models/samplebuilding.gltf");
+		loadglTFFile(getAssetPath() + "models/samplebuilding.gltf");
 	}
 }
 
@@ -290,7 +292,7 @@ void GGVulkanGlTFModel::loadglTFFile(std::string filename) {
     std::string error, warning;
 
 #if defined(__ANDROID__)
-    //tinygltf::asset_manager = VulkanSingleHandle::getAssetManager();
+    tinygltf::asset_manager = VulkanSingleHandle::getAssetManager();
 #endif
     bool fileLoaded = gltfContext.LoadASCIIFromFile(&glTFInput, &error, &warning, filename);
 

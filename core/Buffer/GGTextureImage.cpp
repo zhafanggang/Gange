@@ -24,16 +24,30 @@ GGTextureImage::~GGTextureImage() {
 void GGTextureImage::loadCubeMap(const char *filePath) {}
 
 void GGTextureImage::loadFromFile(const char *filePath, bool cubeFlag) {
+unsigned char *pixels;
+VkDeviceSize imageSize;
+#if defined(__ANDROID__)
+	AAsset* asset = AAssetManager_open(VulkanSingleHandle::getAssetManager(), filePath, AASSET_MODE_STREAMING);
+	if (!asset) {
+		GG_INFO("Could not load texture from");
+	}
+	imageSize =  AAsset_getLength(asset);
+	pixels = new unsigned char[imageSize];
+	AAsset_read(asset, pixels, imageSize);
+	AAsset_close(asset);
+#else
     int texWidth, texHeight, texChannels;
     unsigned char *pixels = stbi_load(filePath, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     mWidth = static_cast<uint32_t>(texWidth);
     mHeight = static_cast<uint32_t>(texHeight);
     VkDeviceSize imageSize = mWidth * mHeight * 4;
-    mMipLevels = 1;
+#endif
 
+    mMipLevels = 1;
     mFormat = VK_FORMAT_R8G8B8A8_UNORM;
 
     if (!pixels) {
+        GG_INFO(filePath);
         throw std::runtime_error("failed to load texture image!");
     }
     if (cubeFlag) {
@@ -44,7 +58,8 @@ void GGTextureImage::loadFromFile(const char *filePath, bool cubeFlag) {
 }
 
 void GGTextureImage::create() {
-    loadFromFile("../../../data/textures/lenna.jpg");
+    std::string file = getAssetPath() + "textures/lenna.jpg";
+    loadFromFile(file.c_str());
 }
 
 void GGTextureImage::createImage(VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties) {
@@ -199,6 +214,7 @@ void GGTextureImage::updateDescriptor() {
 
 void GGTextureImage::loadFromPixels(void *buffer, VkDeviceSize bufferSize, VkFilter filter,
                                     VkImageUsageFlags imageUsageFlags, VkImageLayout imageLayout) {
+    GG_INFO("---DD1D---");
     assert(buffer);
 
     VkMemoryAllocateInfo memAllocInfo = initializers::memoryAllocateInfo();
@@ -218,7 +234,7 @@ void GGTextureImage::loadFromPixels(void *buffer, VkDeviceSize bufferSize, VkFil
     bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     VK_CHECK_RESULT(vkCreateBuffer(mVulkanDevice->logicalDevice, &bufferCreateInfo, nullptr, &stagingBuffer));
-
+GG_INFO("---DD2D---");
     // Get memory requirements for the staging buffer (alignment, memory type bits)
     vkGetBufferMemoryRequirements(mVulkanDevice->logicalDevice, stagingBuffer, &memReqs);
 
