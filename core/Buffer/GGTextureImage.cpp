@@ -30,7 +30,8 @@ void GGTextureImage::loadFromFile(const char *filePath, bool cubeFlag) {
     VkDeviceSize imageSize;
 	AAsset* asset = AAssetManager_open(VulkanSingleHandle::getAssetManager(), filePath, AASSET_MODE_STREAMING);
 	if (!asset) {
-		GG_INFO("Could not load texture from");
+        GG_INFO(filePath);
+		GG_ERROR("Could not load texture from");
 	}
 	imageSize =  AAsset_getLength(asset);
 	pixels = new unsigned char[imageSize];

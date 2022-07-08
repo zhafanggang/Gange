@@ -317,8 +317,10 @@ void GGRenderSystemVulkan::initSwapchain() {
 
 void GGRenderSystemVulkan::createInstance() {
     if (enableValidationLayers && !checkValidationLayerSupport()) {
-        throw std::runtime_error("validation layers requested, but not available!");
+        GG_INFO("validation layers requested, but not available!");
+        enableValidationLayers = false;
     }
+    
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pApplicationName = "Hello Triangle";
