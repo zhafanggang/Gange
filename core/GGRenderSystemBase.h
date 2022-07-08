@@ -20,7 +20,9 @@ public:
     virtual ~GGRenderSystemBase();
 
 #if defined(__ANDROID__)
-    void setNativeWindow(ANativeWindow *nativeWindow);
+    void setNativeWindow(ANativeWindow *nativeWindow, int width,int height);
+
+    void touchEvent(int msgID, float x, float y);
 
 protected:
     ANativeWindow *mNativeWindow;

@@ -43,4 +43,5 @@ public class VulkanDrawThread extends Thread{
     public native void vulkanInit(Object surface, int width, int height, Object assetManager);
     public native void vulkanDraw();
     public native void vulkanDestroy();
+    public native void touchEvent(int msg,float x,float y);
 }

@@ -1,4 +1,6 @@
 ﻿#include "GGCameraController.h"
+#include "GGLogger.h"
+#include <string>
 
 namespace Gange {
 GGCameraController::GGCameraController() {
@@ -134,6 +136,70 @@ void GGCameraController::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
             LPMINMAXINFO minMaxInfo = (LPMINMAXINFO) lParam;
             minMaxInfo->ptMinTrackSize.x = 64;
             minMaxInfo->ptMinTrackSize.y = 64;
+            break;
+        }
+    }
+}
+#elif defined(__ANDROID__)
+void GGCameraController::touchEvent(int msgID, float x, float y)
+{
+    switch(msgID)
+    {
+        case 0:
+        {
+            mouseButtons.right = true;
+
+            mousePos = Vector2(x,y);
+
+            Ray ray = mCamera.createRayFromScreen(mousePos);
+
+            Vector3 pos = ray.getOrigin();
+
+            Real tm = abs((pos.y - 0) / ray.getDirection().y);
+            mButtonRot = ray.getPoint(tm);
+            mButtonRot.y = 0;
+            break;
+        }
+        case 1:
+        {
+            handleMouseMove(x,y);
+            break;
+        }
+        case 2:
+        {
+            mouseButtons.right = false;
+            break;
+        }
+        case 4:
+        {
+            Real persent = x ;
+            switch (mCamera.mCameraType) {
+                case Camera::CameraType::firstperson: {
+                    Ray ray = mCamera.createRayFromScreen(mousePos);
+                    Vector3 pos = ray.getOrigin();
+                    float tm = abs((pos.y - 0) / ray.getDirection().y);
+                    Vector3 center = ray.getPoint(tm);
+                    center.z = 0;
+                    mCamera.scaleCameraByPos(center, persent);
+                    break;
+                };
+                case Camera::CameraType::thirdperson: {
+                    mCamera.setRadius(persent * mCamera.getRadius());
+                    break;
+                };
+            }
+            mViewUpdated = true;
+            break;
+        }
+        case 5:
+            mousePos = Vector2(x,y);
+            mouseButtons.middle = true;
+            break;
+        case 6:
+            mouseButtons.middle = false;
+            break;
+        default:
+        {
             break;
         }
     }

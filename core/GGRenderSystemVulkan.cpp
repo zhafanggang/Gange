@@ -532,7 +532,7 @@ void GGRenderSystemVulkan::windowResize() {
     if ((mWindowWidth > 0.0f) && (mWindowWidth > 0.0f)) {
         mCameraController->getCamera()->setWindowSize((Real) mWindowWidth, (Real) mWindowHeight);
     }
-
+    
     mPreparedFlag = true;
 }
 

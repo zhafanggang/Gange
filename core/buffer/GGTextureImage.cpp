@@ -4,6 +4,7 @@
 #include "GGVulkanTools.h"
 #include "GGVulkanInitializers.h"
 #include "GGVulkanSingleHandle.h"
+#include <string>
 
 namespace Gange {
 
@@ -24,30 +25,39 @@ GGTextureImage::~GGTextureImage() {
 void GGTextureImage::loadCubeMap(const char *filePath) {}
 
 void GGTextureImage::loadFromFile(const char *filePath, bool cubeFlag) {
-
-#if defined(__ANDROID__)
+    int texWidth, texHeight, texChannels;
     unsigned char *pixels;
     VkDeviceSize imageSize;
-	AAsset* asset = AAssetManager_open(VulkanSingleHandle::getAssetManager(), filePath, AASSET_MODE_STREAMING);
-	if (!asset) {
-        GG_INFO(filePath);
-		GG_ERROR("Could not load texture from");
-	}
-	imageSize =  AAsset_getLength(asset);
-	pixels = new unsigned char[imageSize];
-	AAsset_read(asset, pixels, imageSize);
-	AAsset_close(asset);
-#else
-    int texWidth, texHeight, texChannels;
-    unsigned char *pixels = stbi_load(filePath, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+#if defined(__ANDROID__)
+     // 打开 Asset 文件夹下的文件
+    AAsset *asset = AAssetManager_open(VulkanSingleHandle::getAssetManager(), filePath, AASSET_MODE_UNKNOWN);
+     // 得到文件的长度
+    imageSize = (VkDeviceSize)AAsset_getLength(asset);
+     // 得到文件对应的 Buffer 
+    unsigned char *fileData = (unsigned char *) AAsset_getBuffer(asset);
+     // stb_image 的方法，从内存中加载图片
+    pixels = stbi_load_from_memory(fileData, imageSize, &texWidth, &texHeight, &texChannels, 0);
     mWidth = static_cast<uint32_t>(texWidth);
     mHeight = static_cast<uint32_t>(texHeight);
-    VkDeviceSize imageSize = mWidth * mHeight * 4;
+    AAsset_close(asset);
+#else
+    pixels = stbi_load(filePath, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    mWidth = static_cast<uint32_t>(texWidth);
+    mHeight = static_cast<uint32_t>(texHeight);
 #endif
 
-    mMipLevels = 1;
-    mFormat = VK_FORMAT_R8G8B8A8_UNORM;
+    imageSize = mWidth * mHeight * texChannels;
 
+    mMipLevels = 1;
+    if (texChannels == 3)
+    {
+        mFormat = VK_FORMAT_R8G8B8_UNORM;
+    }else
+    {
+        mFormat = VK_FORMAT_R8G8B8A8_UNORM;
+    }
+    
     if (!pixels) {
         GG_INFO(filePath);
         throw std::runtime_error("failed to load texture image!");
@@ -216,7 +226,6 @@ void GGTextureImage::updateDescriptor() {
 
 void GGTextureImage::loadFromPixels(void *buffer, VkDeviceSize bufferSize, VkFilter filter,
                                     VkImageUsageFlags imageUsageFlags, VkImageLayout imageLayout) {
-    GG_INFO("---DD1D---");
     assert(buffer);
 
     VkMemoryAllocateInfo memAllocInfo = initializers::memoryAllocateInfo();
@@ -236,7 +245,7 @@ void GGTextureImage::loadFromPixels(void *buffer, VkDeviceSize bufferSize, VkFil
     bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     VK_CHECK_RESULT(vkCreateBuffer(mVulkanDevice->logicalDevice, &bufferCreateInfo, nullptr, &stagingBuffer));
-GG_INFO("---DD2D---");
+
     // Get memory requirements for the staging buffer (alignment, memory type bits)
     vkGetBufferMemoryRequirements(mVulkanDevice->logicalDevice, stagingBuffer, &memReqs);
 
@@ -247,13 +256,11 @@ GG_INFO("---DD2D---");
 
     VK_CHECK_RESULT(vkAllocateMemory(mVulkanDevice->logicalDevice, &memAllocInfo, nullptr, &stagingMemory));
     VK_CHECK_RESULT(vkBindBufferMemory(mVulkanDevice->logicalDevice, stagingBuffer, stagingMemory, 0));
-
     // Copy texture data into staging buffer
     uint8_t *data;
     VK_CHECK_RESULT(vkMapMemory(mVulkanDevice->logicalDevice, stagingMemory, 0, memReqs.size, 0, (void **) &data));
     memcpy(data, buffer, bufferSize);
     vkUnmapMemory(mVulkanDevice->logicalDevice, stagingMemory);
-
     VkBufferImageCopy bufferCopyRegion = {};
     bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     bufferCopyRegion.imageSubresource.mipLevel = 0;
@@ -263,7 +270,6 @@ GG_INFO("---DD2D---");
     bufferCopyRegion.imageExtent.height = mHeight;
     bufferCopyRegion.imageExtent.depth = 1;
     bufferCopyRegion.bufferOffset = 0;
-
     // Create optimal tiled target image
     VkImageCreateInfo imageCreateInfo = initializers::imageCreateInfo();
     imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -285,10 +291,11 @@ GG_INFO("---DD2D---");
     vkGetImageMemoryRequirements(mVulkanDevice->logicalDevice, mImage, &memReqs);
 
     memAllocInfo.allocationSize = memReqs.size;
-
     memAllocInfo.memoryTypeIndex =
         mVulkanDevice->getMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
     VK_CHECK_RESULT(vkAllocateMemory(mVulkanDevice->logicalDevice, &memAllocInfo, nullptr, &mDeviceMemory));
+
     VK_CHECK_RESULT(vkBindImageMemory(mVulkanDevice->logicalDevice, mImage, mDeviceMemory, 0));
 
     VkImageSubresourceRange subresourceRange = {};
@@ -314,7 +321,7 @@ GG_INFO("---DD2D---");
     // Clean up staging resources
     vkFreeMemory(mVulkanDevice->logicalDevice, stagingMemory, nullptr);
     vkDestroyBuffer(mVulkanDevice->logicalDevice, stagingBuffer, nullptr);
-
+    
     // Create sampler
     VkSamplerCreateInfo samplerCreateInfo = {};
     samplerCreateInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -330,7 +337,7 @@ GG_INFO("---DD2D---");
     samplerCreateInfo.maxLod = 0.0f;
     samplerCreateInfo.maxAnisotropy = 1.0f;
     VK_CHECK_RESULT(vkCreateSampler(mVulkanDevice->logicalDevice, &samplerCreateInfo, nullptr, &mSampler));
-
+ 
     // Create image view
     VkImageViewCreateInfo viewCreateInfo = {};
     viewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;

@@ -28,10 +28,15 @@ void RenderBase::setTarget(HINSTANCE hInstance, HWND window) {
 }
 
 #elif defined(__ANDROID__)
-void RenderBase::setTarget(ANativeWindow *nativeWindow,AAssetManager *assetManager)
+void RenderBase::setTarget(ANativeWindow *nativeWindow, AAssetManager *assetManager,int width, int height)
 {
     VulkanSingleHandle::setAssetManager(assetManager);
-    Singleton<GGRenderSystemVulkan>::Get()->setNativeWindow(nativeWindow);
+    Singleton<GGRenderSystemVulkan>::Get()->setNativeWindow(nativeWindow,width,height);
+}
+
+void RenderBase::touchEvent(int msgID, float x, float y)
+{
+    Singleton<GGRenderSystemVulkan>::Get()->touchEvent(msgID, x, y);
 }
 #endif
 

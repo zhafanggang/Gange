@@ -24,8 +24,10 @@ public:
 
     void handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #elif defined(__ANDROID__)
-    void setTarget(ANativeWindow *nativeWindow, AAssetManager *assetManager);
-#endif // _WIN32
+    void setTarget(ANativeWindow *nativeWindow,AAssetManager *assetManager,int width, int height);
+
+    void touchEvent(int msgID, float x, float y);
+#endif 
 
     void prepare();
 

@@ -59,14 +59,14 @@ task copyTask {
     }
 
     copy {
-        from '../../../../data/textures/model'
+        from '../../../../data/textures/'
         into "assets/textures/"
         include 'floor.jpg'
     }
 
     copy {
         from '../../../../data/shaders/phong'
-        into 'assets/shaders/'
+        into 'assets/shaders/phong'
         include '*.spv'
     }
 

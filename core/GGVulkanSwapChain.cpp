@@ -143,6 +143,8 @@ void GGVulkanSwapChain::create(uint32_t *width, uint32_t *height, bool vsync) {
     VkSurfaceCapabilitiesKHR surfCaps;
     VK_CHECK_RESULT(fpGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfCaps));
 
+    std::string pst = std::to_string(*width);
+    GG_INFO(pst.c_str());
     // Get available present modes
     uint32_t presentModeCount;
     VK_CHECK_RESULT(fpGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, NULL));

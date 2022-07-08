@@ -10,9 +10,11 @@ GGRenderPipline::GGRenderPipline(VkRenderPass renderPass, VkSampleCountFlagBits 
     mSampleCount = sampleCount;
 
     mUniformBufferManger = new UniformManager();
-
+    
     mVaoManager = new VaoManager();
+
     mVaoManager->setUniform(mUniformBufferManger->mUniformBufferVec);
+
     mShaderManager = new ShaderManager();
 
     uniformBuffer = new GGUniformBufferHandle();

@@ -17,7 +17,8 @@ public:
 #ifdef _WIN32
 
     void handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
+#elif defined(__ANDROID__)
+    void touchEvent(int msgID, float x, float y);
 #endif
 
     Camera *getCamera();

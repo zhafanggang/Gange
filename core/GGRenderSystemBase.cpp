@@ -41,10 +41,20 @@ void GGRenderSystemBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 }
 
 #elif defined(__ANDROID__)
-void GGRenderSystemBase::setNativeWindow(ANativeWindow *nativeWindow)
+void GGRenderSystemBase::setNativeWindow(ANativeWindow *nativeWindow, int width, int height)
 {
     this->mNativeWindow = nativeWindow;
+    this->mWindowWidth = width;
+    this->mWindowHeight = height;
 }
+
+void GGRenderSystemBase::touchEvent(int msgID, float x, float y)
+{
+    if (this) {
+        mCameraController->touchEvent(msgID, x, y);
+    }
+}
+
 #endif
 
 }  // namespace Gange
