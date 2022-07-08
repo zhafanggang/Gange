@@ -1,7 +1,9 @@
 #define TINYGLTF_IMPLEMENTATION
 #define TINYGLTF_NO_INCLUDE_STB_IMAGE
 #define TINYGLTF_NO_STB_IMAGE_WRITE
+#if defined(__ANDROID__)
 #define TINYGLTF_ANDROID_LOAD_FROM_ASSETS
+#endif
 #include <tinygltf/stb_image.h>
 #include <tinygltf/tiny_gltf.h>
 #include "GGVulkanGlTFModel.h"

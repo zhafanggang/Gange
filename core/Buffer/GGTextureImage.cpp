@@ -24,9 +24,10 @@ GGTextureImage::~GGTextureImage() {
 void GGTextureImage::loadCubeMap(const char *filePath) {}
 
 void GGTextureImage::loadFromFile(const char *filePath, bool cubeFlag) {
-unsigned char *pixels;
-VkDeviceSize imageSize;
+
 #if defined(__ANDROID__)
+    unsigned char *pixels;
+    VkDeviceSize imageSize;
 	AAsset* asset = AAssetManager_open(VulkanSingleHandle::getAssetManager(), filePath, AASSET_MODE_STREAMING);
 	if (!asset) {
 		GG_INFO("Could not load texture from");

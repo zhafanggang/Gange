@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include <iostream>
 #include <chrono>
-#include "RenderBase.h"
+#include "GGRenderBase.h"
 
 namespace demovulkan {
 

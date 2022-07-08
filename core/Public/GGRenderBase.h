@@ -11,7 +11,7 @@
 namespace Gange {
 
 #ifdef _WIN32
-class _GGDllexport RenderBase {
+class __declspec(dllexport) RenderBase {
 #else
 class RenderBase {
 #endif
