@@ -14,7 +14,6 @@ const std::string getAssetPath()
 #endif
 }
 
-
 namespace Gange {
 
 namespace Vulkantools {

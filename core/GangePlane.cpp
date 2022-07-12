@@ -20,7 +20,7 @@ void Plane::initialize() {
     mIndices = {0, 1, 2, 2, 3, 0};
 
     loadVao(mVextices, mIndices);
-    std::string imagePath =  getAssetPath() + "textures/floor.jpg";
+    std::string imagePath =  getAssetPath() + "textures/cube.png";
 
     loadTexture(imagePath.c_str());
 }

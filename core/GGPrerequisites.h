@@ -14,9 +14,6 @@ class Matrix4;
 class Quaternion;
 class Radian;
 
-
-
-
 #ifdef _WIN32
 #define _GGDllexport __declspec(dllexport)
 #define FORCEINLINE __forceinline
@@ -32,9 +29,6 @@ class Radian;
 typedef double Real;
 typedef uint64 RealAsUint;
 #else
-/** Software floating point type.
-@note Not valid as a pointer to GPU buffers / parameters
-*/
 typedef float Real;
 typedef int8_t int8;
 typedef int16_t int16;
